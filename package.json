@@ -1,0 +1,19 @@
+{
+  "name": "well-traveled",
+  "version": "1.0.0",
+  "description": "An app for gamefying your travels",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eric-do/well-traveled.git"
+  },
+  "author": "Eric Do",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eric-do/well-traveled/issues"
+  },
+  "homepage": "https://github.com/eric-do/well-traveled#readme"
+}
