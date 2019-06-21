@@ -42,11 +42,11 @@ class ProfileView extends React.Component {
       <AchievementList>
         {
           this.state.achievements.map(achievement => (
-            <AchievementCard>
+            <AchievementCard key={achievement.title}>
               <AchievementTitle>{achievement.title}</AchievementTitle>
               <AchievementSubtitle>{achievement.subtitle}</AchievementSubtitle>
               {
-                achievement.complete ? <i style={{color:"green"}} class="fas fa-check"></i> : null
+                achievement.complete ? <i style={{color:"green"}} className="fas fa-check"></i> : null
               }
             </AchievementCard>
           ))

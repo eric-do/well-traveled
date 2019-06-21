@@ -28,9 +28,13 @@ class TravelView extends React.Component {
   constructor(prop) {
     super(prop);
     this.state = ({
-      showModal: false
+      showModal: false,
+      cities: [
+        'San Francisco', 
+        'Tokyo',
+        'Hanoi'
+      ]
     });
-
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
@@ -55,8 +59,16 @@ class TravelView extends React.Component {
           <ReactModal
             isOpen={this.state.showModal}
             style={modalStyle}
+            shouldCloseOnEsc={true}
+            onRequestClose={this.handleCloseModal}
           >
-            <button onClick={this.handleCloseModal}>Close Modal</button>
+            {
+              this.state.cities.map(city => (
+                <Card key={city}>
+                  <Title>{city}</Title>
+                </Card>
+              ))
+            }
           </ReactModal>
         </Card>
         <Card>
