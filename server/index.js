@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const parser = require('body-parser');
+const { getLocations, getLandmarks } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -13,6 +14,17 @@ app.use(parser.urlencoded({
 }));
 
 // ROUTES
+app.get('/locations', (req, res) => {
+  getLocations(req, res);
+});
+
+app.get('/landmarks', (req, res) => {
+  getLandmarks(req, res);
+});
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/dist/index.html'));
+});
 
 // LISTENER
 app.listen(port, () => {

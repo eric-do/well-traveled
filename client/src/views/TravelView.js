@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import ReactModal from 'react-modal';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const CardContainer = styled.div``;
 
@@ -9,6 +11,10 @@ const Card = styled.div`
 `;
 
 const Title = styled.h1`
+  font-family: 'Pacifico', cursive; 
+`;
+
+const StyledLink = styled(Link)`
   font-family: 'Pacifico', cursive; 
 `;
 
@@ -25,8 +31,8 @@ const modalStyle = {
 ReactModal.setAppElement('#app');
 
 class TravelView extends React.Component {
-  constructor(prop) {
-    super(prop);
+  constructor(props) {
+    super(props);
     this.state = ({
       showModal: false,
       cities: [
@@ -39,6 +45,14 @@ class TravelView extends React.Component {
     this.handleOpenModal = this.handleOpenModal.bind(this);
   }
 
+  componentDidMount() {
+    axios.get('/locations')
+      .then(locations => {
+        const cities = locations.data.map(location => location.name);
+        this.setState({ cities });
+      });
+  }
+
   handleOpenModal() {
     this.setState({
       showModal: true
@@ -49,6 +63,11 @@ class TravelView extends React.Component {
     this.setState({
       showModal: false
     });
+  }
+
+  handleSelectCity(city) {
+    this.handleCloseModal();
+    this.props.handleUpdateCity(city);
   }
 
   render() {
@@ -65,7 +84,10 @@ class TravelView extends React.Component {
             {
               this.state.cities.map(city => (
                 <Card key={city}>
-                  <Title>{city}</Title>
+                  <StyledLink
+                    onClick={() => this.handleSelectCity(city)}
+                    to="/city"
+                  >{city}</StyledLink>
                 </Card>
               ))
             }

@@ -11,7 +11,7 @@ const LandmarkName = styled.h1`
 `;
 
 class CityView extends React.Component {
-  constructo(props) {
+  constructor(props) {
     super(props);
     this.state = ({
       city: 'San Francisco',
@@ -38,10 +38,10 @@ class CityView extends React.Component {
         <CityName>{this.state.city}</CityName>
         {
           this.state.landmarks.map(city => (
-            <Landmark>
+            <Landmark key={city.name}>
               <LandmarkName>{city.name}</LandmarkName>
               {
-                city.bookmarked ? <i class="fas fa-bookmark"></i> : null
+                city.bookmarked ? <i className="fas fa-bookmark"></i> : null
               }
             </Landmark>
           ))

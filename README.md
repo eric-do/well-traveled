@@ -12,3 +12,17 @@ This is an app that allows users to gamify their travels through quizzes and ach
 - Express
 - React with Redux
 - Node
+
+## Actions
+- DisplayModal
+- SelectLocation
+- SelectLandmark
+- SelectAnswer
+
+## Data
+### Cities
+```javascript
+[
+  
+]
+```
