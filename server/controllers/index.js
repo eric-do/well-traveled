@@ -21,15 +21,21 @@ module.exports = {
   },
 
   getQuestions: (req, res) => {
-    console.log(req.query);
     Question.findAll({
       include: {
         model: Landmark,
-        where: {id: req.query.id }
+        where: { id: req.query.id }
       }
     }).then(result => {
-      console.log(result);
       res.send(result);
-    });
+    }).catch(e => res.status(500).send('Error getting questions'));
+  },
+
+  getAnswers: (req, res) => {
+    const questionId = req.query.id;
+    Answer.findAll({ where: { questionId } })
+      .then(result => {
+        res.send(result);
+    }).catch(e => res.status(500).send('Error getting answers'));
   }
 }

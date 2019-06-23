@@ -68,7 +68,6 @@ class CityView extends React.Component {
   }
   
   render() {
-    console.log(this.state.landmarks);
     return (
       <LandmarkList>
         <CityName>{this.props.name}</CityName>
@@ -76,10 +75,11 @@ class CityView extends React.Component {
           this.state.landmarks.map(landmark => (
             <StyledLink key={landmark.name} to="/landmark" >
               <Landmark 
-                onClick={() => this.props.handleUpdateLandmark(landmark)}
                 url={landmark.url}
               >
-                <Layer>
+                <Layer
+                  onClick={() => this.props.handleUpdateLandmark(landmark)}
+                >
                 <LandmarkName>{landmark.name}</LandmarkName>
                 {
                   landmark.bookmarked ? <i className="fas fa-bookmark"></i> : null

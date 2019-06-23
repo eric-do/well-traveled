@@ -48,12 +48,6 @@ class App extends React.Component {
             name={this.state.city.name} 
             handleUpdateLandmark={this.handleUpdateLandmark}/>} 
           /> 
-          />
-          <Route 
-            path="/travel" exact 
-            render={(props) => <TravelView {...props} 
-              handleUpdateCity={this.handleUpdateCity} />} 
-          />
           <Route 
             path="/city" 
             render={(props) => <CityView {...props} 

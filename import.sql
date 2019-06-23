@@ -57,6 +57,46 @@ INSERT INTO questions (landmarkId, text) VALUES (12, "On what street is the Basi
 -- VIETNAM
 INSERT INTO questions (landmarkId, text) VALUES (14, "What district is Ho Chi Minh Square located?");
 
+-- QUESTIONS
+INSERT INTO answers (questionId, text, correct) VALUES (1, "Red", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (1, "Blue", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (1, "Gold", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (1, "Green", 0);
+
+INSERT INTO answers (questionId, text, correct) VALUES (2, "4", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (2, "2", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (2, "3", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (2, "1", 0);
+
+INSERT INTO answers (questionId, text, correct) VALUES (3, "Mission Street", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (3, "Geary Boulevard", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (3, "3rd Street", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (3, "The Embarcadero", 0);
+
+INSERT INTO answers (questionId, text, correct) VALUES (4, "1845", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (4, "1911", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (4, "1736", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (4, "1753", 1);
+
+INSERT INTO answers (questionId, text, correct) VALUES (5, "Mission Street", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (5, "Geary Boulevard", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (5, "3rd Street", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (5, "The Embarcadero", 1);
+
+INSERT INTO answers (questionId, text, correct) VALUES (6, "Bow and arrow", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (6, "An explorer", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (6, "A child", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (6, "A ship", 0);
+
+INSERT INTO answers (questionId, text, correct) VALUES (7, "A triceratops", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (7, "A wooly mammoth", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (7, "A T-rex", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (7, "A tiger", 0);
+
+INSERT INTO answers (questionId, text, correct) VALUES (9, "The Angels", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (9, "The Raiders", 0);
+INSERT INTO answers (questionId, text, correct) VALUES (9, "The Giants", 1);
+INSERT INTO answers (questionId, text, correct) VALUES (9, "The Red Sox", 0);
 -- IMAGES
 UPDATE landmarks SET url = "/images/locations/goldengate.jpg"
 WHERE id = 1;
