@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const parser = require('body-parser');
-const { getLocations, getLandmarks } = require('./controllers');
+const { getLocations, getLandmarks, getQuestions } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -20,6 +20,10 @@ app.get('/locations', (req, res) => {
 
 app.get('/landmarks', (req, res) => {
   getLandmarks(req, res);
+});
+
+app.get('/questions', (req, res) => {
+  getQuestions(req, res);
 });
 
 app.get('/*', (req, res) => {

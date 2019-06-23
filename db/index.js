@@ -36,6 +36,10 @@ const Landmark = sequelize.define('landmark', {
   name: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  url: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, { timestamps: false }
 );
@@ -84,6 +88,8 @@ Question.hasMany(Answer);
 Answer.belongsTo(Question);
 Achievement.belongsToMany(User, { through: 'user_achievements' });
 User.belongsToMany(Achievement, { through: 'user_achievements' });
+Question.belongsToMany(User, { through: 'user_questions' });
+User.belongsToMany(Question, { through: 'user_questions' });
 sequelize.sync({ force: false });
 
 module.exports = { User, Location, Landmark, Question, Answer, Achievement };

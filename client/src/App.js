@@ -5,26 +5,36 @@ import { BrowserRouter as Router, Route} from 'react-router-dom';
 import TravelView from './views/TravelView';
 import ProfileView from './views/ProfileView';
 import CityView from './views/CityView';
+import LandmarkView from './views/LandmarkView';
+import QuestionView from './views/QuestionView';
 
 const AppContainer = styled.div``;
 
-const Travel = () => (<TravelView />);
 const Profile = () => (<ProfileView />);
-const City = () => (<CityView />);
-
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = ({
       view: 'travel',
-      city: '',
+      city: {id: 1, name: "San Francisco"},
+      landmark: {},
+      question: {},
       user: {}
     });
     this.handleUpdateCity = this.handleUpdateCity.bind(this);
+    this.handleUpdateLandmark = this.handleUpdateLandmark.bind(this);
   }
 
   handleUpdateCity(city) {
     this.setState({ city });
+  }
+
+  handleUpdateLandmark(landmark) {
+    this.setState({ landmark });
+  }
+
+  handleUpdateQuestion(question) {
+    this.setState({ question });
   }
 
   render() {
@@ -33,14 +43,35 @@ class App extends React.Component {
         <Router>
           <AppHeader />
           <Route path="/" exact 
-            render={(props) => <TravelView {...props} handleUpdateCity={this.handleUpdateCity} />} />
+            render={(props) => <CityView {...props} 
+            id={this.state.city.id} 
+            name={this.state.city.name} 
+            handleUpdateLandmark={this.handleUpdateLandmark}/>} 
+          /> 
+          />
           <Route 
             path="/travel" exact 
-            render={(props) => <TravelView {...props} handleUpdateCity={this.handleUpdateCity} />} />
-          <Route path="/profile" component={Profile} />    
+            render={(props) => <TravelView {...props} 
+              handleUpdateCity={this.handleUpdateCity} />} 
+          />
           <Route 
             path="/city" 
-            render={(props) => <CityView {...props} city={this.state.city} />} /> 
+            render={(props) => <CityView {...props} 
+              id={this.state.city.id} 
+              name={this.state.city.name} 
+              handleUpdateLandmark={this.handleUpdateLandmark}/>} 
+          /> 
+          <Route 
+            path="/landmark" 
+            render={(props) => <LandmarkView {...props} 
+            landmark={this.state.landmark} />} 
+          />   
+          <Route 
+            path="/question" 
+            render={(props) => <QuestionView {...props} 
+            question={this.state.question} />} 
+          /> 
+          <Route path="/profile" component={Profile} />    
         </Router>
       </AppContainer>
     );
