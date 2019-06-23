@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import ReactModal from 'react-modal';
+import AchievementModal from 'react-modal';
 
 const QuestionList = styled.div`
   display: flex;
@@ -10,36 +10,42 @@ const QuestionList = styled.div`
   justify-content: center;
 `;
 
-const LandmarkName = styled.h1`
+const Title = styled.h1`
   font-family: 'Pacifico', cursive; 
   display: flex;
   justify-content: center;
 `;
 
-const StyledLink = styled(Link)`
-  display: flex;
-  justify-content: center;
-  text-decoration: none;
-
-  &:focus, &:hover, &:visited, &:link, &:active {
-      text-decoration: none;
-  }
-`;
-
-const QuestionBox = styled.div`
+const Box = styled.div`
   max-width: 450px;
-  min-width: 400px;
+  min-width: 300px;
   height: 100px;
   margin-top: 5px;
   border: 1px black solid;
   display: flex;
   justify-content: center;
   padding: 0 10px 0 10px;
+  align-items: center;
 `;
 
-const QuestionName = styled.h1`
+const BoxLabel = styled.h1`
   font-family: 'Open Sans', sans-serif; 
   font-size: 20px;
+`;
+
+const Status = styled.div`
+  font-family: 'Open Sans', sans-serif; 
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+`;
+
+const CorrectStatus = styled(Status)`
+  color: green;
+`;
+
+const IncorrectStatus = styled(Status)`
+  color: red;
 `;
 
 const modalStyle = {
@@ -53,6 +59,7 @@ const modalStyle = {
 };
 
 ReactModal.setAppElement('#app');
+AchievementModal.setAppElement('#app');
 
 class LandmarkView extends React.Component {
   constructor(props) {
@@ -60,11 +67,18 @@ class LandmarkView extends React.Component {
     this.state = ({
       questions: [],
       currentQuestion: {},
-      questionAnswers: []
+      questionAnswers: [],
+      showModal: false,
+      showAchievement: false,
+      achievement: null,
+      correct: null
     });
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.getAnswersForQuestion = this.getAnswersForQuestion.bind(this);
+    this.handleQuestionAttempt = this.handleQuestionAttempt.bind(this);
+    this.handleCloseAchievement = this.handleCloseAchievement.bind(this);
+    this.handleOpenAchievement = this.handleOpenAchievement.bind(this);
   }
 
   componentDidMount() {
@@ -89,6 +103,7 @@ class LandmarkView extends React.Component {
     const id = currentQuestion.id;
     axios.get('/answers', { params: { id } })
       .then(result => {
+        console.log(result);
         const questionAnswers = result.data;
         this.setState({ 
                         currentQuestion, 
@@ -100,20 +115,62 @@ class LandmarkView extends React.Component {
   }
 
   handleCloseModal() {
-    this.setState({
-      showModal: false
-    });
+    const showModal = false;
+    const correct = null;
+    this.setState({ showModal, correct });
+
+    if (this.state.achievement) {
+      const showAchievement = true;
+      this.setState({ showAchievement });
+    }
+  }
+
+  handleOpenAchievement() {
+
+  }
+
+  handleCloseAchievement() {
+    const showAchievement = false;
+    const achievement = null;
+    this.setState({ showAchievement, achievement });
+  }
+
+  handleQuestionAttempt(answer, question) {
+    // Update state so answer status is displayed
+    // Make a call to the BE to see if a new achievement has been made
+    // Update achievement status
+    const correct = answer.correct;
+    console.log(question);
+    if (correct) {
+      // Send questionID
+      // If server responds with an achivement
+      // Update achievement state and correct state both to true
+      axios.post('/questions', {
+        userId: 1,
+        questionId: question.id
+      }).then(results => {
+        console.log(results);
+        if (results.data) {
+          const achievement = results.data;
+          this.setState({ achievement });
+        }
+      }).catch(e => {
+        console.error('Error getting data', e);
+      });
+    }
+
+    this.setState({ correct });
   }
 
   render() {
     return (
       <QuestionList>
-        <LandmarkName>{this.props.landmark.name}</LandmarkName>
+        <Title>{this.props.landmark.name}</Title>
         {
           this.state.questions.map(question => (
-              <QuestionBox onClick={() => this.handleOpenModal(question)} >
-                <QuestionName>{question.text}</QuestionName>
-              </QuestionBox>
+              <Box onClick={() => this.handleOpenModal(question)} >
+                <BoxLabel>{question.text}</BoxLabel>
+              </Box>
           ))
         }
         <ReactModal
@@ -122,10 +179,30 @@ class LandmarkView extends React.Component {
             shouldCloseOnEsc={true}
             onRequestClose={this.handleCloseModal}
           >
+            <Title>{ this.state.currentQuestion.text }</Title>
             {
-              this.state.question ? this.state.question.text : 'pending'
+              this.state.questionAnswers.map(answer =>(
+                <Box onClick={() => this.handleQuestionAttempt(answer, this.state.currentQuestion)}>
+                  <BoxLabel>{answer.text}</BoxLabel>
+                </Box>
+              ))
+            }
+            {
+              this.state.correct === true ? <CorrectStatus>Correct!</CorrectStatus> :
+              this.state.correct === false ? <IncorrectStatus>Incorrect!</IncorrectStatus> :
+              null
             }
         </ReactModal>
+        <AchievementModal
+            isOpen={this.state.showAchievement}
+            style={modalStyle}
+            shouldCloseOnEsc={true}
+            onRequestClose={this.handleCloseAchievement}
+          >
+          <Title>Achivement unlocked!</Title>
+          <BoxLabel>{this.state.achievement ? this.state.achievement.name : null}</BoxLabel>
+          <BoxLabel>{this.state.achievement ? this.state.achievement.description : null}</BoxLabel>
+        </AchievementModal>
       </QuestionList>
     );
   }

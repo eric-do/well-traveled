@@ -7,6 +7,7 @@ const LandmarkList = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
 `;
 const Landmark = styled.div`
   max-width: 600px;

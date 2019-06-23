@@ -3,7 +3,9 @@ const { User,
   Landmark, 
   Question, 
   Answer, 
-  Achievement } = require('../../db');
+  Achievement,
+  UserQuestions,
+  UserAchievements } = require('../../db');
 
 module.exports = {
   getLocations: (req, res) => {
@@ -37,5 +39,43 @@ module.exports = {
       .then(result => {
         res.send(result);
     }).catch(e => res.status(500).send('Error getting answers'));
+  },
+
+  updateUserQuestions: (req, res) => {
+    // Find User from ID
+    // Find Question from ID
+    // Insert new row into user_question table
+    // Find all from user_question table and get the length
+    const userId = req.body.userId;
+    const questionId = req.body.questionId;
+    User.findByPk(userId)
+      .then(user => {
+        Question.findByPk(questionId)
+        .then(question => user.addQuestion(question))
+        .then(() => UserQuestions.findAll({ where: { userId } } ))
+        .then(result => {
+          const count = result.length;
+          module.exports.calculateAchievement(userId, count, res);
+        });
+    })
+  },
+
+  calculateAchievement: (userId, count, res) => {
+    // Get achievement ID from achievements table where count == count
+    // Query UserAchivements for user id and achivement id
+    // If found, return null
+    // If no results
+    //  Insert new user achievement
+    //  Return new achievement
+    Achievement.findOne({ where: { count }})
+      .then(achievement => {
+        if (achievement) {
+          User.findByPk(userId)
+          .then(user => user.addAchievement(achievement))
+          .then(() => res.send(achievement))
+        } else {
+          res.status(200).send();
+        }
+      });
   }
 }

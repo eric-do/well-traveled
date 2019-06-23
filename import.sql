@@ -97,6 +97,11 @@ INSERT INTO answers (questionId, text, correct) VALUES (9, "The Angels", 0);
 INSERT INTO answers (questionId, text, correct) VALUES (9, "The Raiders", 0);
 INSERT INTO answers (questionId, text, correct) VALUES (9, "The Giants", 1);
 INSERT INTO answers (questionId, text, correct) VALUES (9, "The Red Sox", 0);
+
+-- ACHIEVEMENTS
+INSERT INTO achievements (name, description, count) VALUES ("SF Visitor", "Answer 1 question about San Francisco", 1);
+INSERT INTO achievements (name, description, count) VALUES ("SF Explorer", "Answer 5 questions about San Francisco", 5);
+
 -- IMAGES
 UPDATE landmarks SET url = "/images/locations/goldengate.jpg"
 WHERE id = 1;
