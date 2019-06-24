@@ -5,7 +5,7 @@ const { User,
   Answer, 
   Achievement,
   UserQuestions,
-  UserAchievements } = require('../../db');
+  sequelize } = require('../../db');
 
 module.exports = {
   getLocations: (req, res) => {
@@ -77,5 +77,15 @@ module.exports = {
           res.status(200).send();
         }
       });
+  },
+
+  getUserAchievements: (req, res) => {
+    const id = req.query.id;
+    const query = `SELECT achievements.name, achievements.description FROM users
+                   INNER JOIN user_achievements ON (users.id = user_achievements.userId)
+                   INNER JOIN achievements on (user_achievements.achievementId = achievements.id)
+                   WHERE users.id = ${id}`
+    sequelize.query(query)
+      .then(([results, metadata]) => res.send(results));
   }
 }

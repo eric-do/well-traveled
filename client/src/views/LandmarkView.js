@@ -16,6 +16,19 @@ const Title = styled.h1`
   justify-content: center;
 `;
 
+const AchievementTitle = styled.h2`
+  color: #39CCCC;
+  font-family: 'Pacifico', cursive;
+  display: flex;
+  justify-content: center; 
+`;
+
+const AchievementSubtitle = styled.h3`
+  font-family: 'Open Sans', sans-serif;
+  display: flex;
+  justify-content: center;
+`;
+
 const Box = styled.div`
   max-width: 450px;
   min-width: 300px;
@@ -35,13 +48,16 @@ const BoxLabel = styled.h1`
 
 const Status = styled.div`
   font-family: 'Open Sans', sans-serif; 
-  font-size: 20px;
+  font-size: 26px;
+  font-family: 'Pacifico', cursive; 
   display: flex;
   justify-content: center;
+  margin-top: 50px;
 `;
 
 const CorrectStatus = styled(Status)`
   color: green;
+  
 `;
 
 const IncorrectStatus = styled(Status)`
@@ -168,7 +184,7 @@ class LandmarkView extends React.Component {
         <Title>{this.props.landmark.name}</Title>
         {
           this.state.questions.map(question => (
-              <Box onClick={() => this.handleOpenModal(question)} >
+              <Box key={question.id} onClick={() => this.handleOpenModal(question)} >
                 <BoxLabel>{question.text}</BoxLabel>
               </Box>
           ))
@@ -182,7 +198,7 @@ class LandmarkView extends React.Component {
             <Title>{ this.state.currentQuestion.text }</Title>
             {
               this.state.questionAnswers.map(answer =>(
-                <Box onClick={() => this.handleQuestionAttempt(answer, this.state.currentQuestion)}>
+                <Box key={answer.id} onClick={() => this.handleQuestionAttempt(answer, this.state.currentQuestion)}>
                   <BoxLabel>{answer.text}</BoxLabel>
                 </Box>
               ))
@@ -200,8 +216,8 @@ class LandmarkView extends React.Component {
             onRequestClose={this.handleCloseAchievement}
           >
           <Title>Achivement unlocked!</Title>
-          <BoxLabel>{this.state.achievement ? this.state.achievement.name : null}</BoxLabel>
-          <BoxLabel>{this.state.achievement ? this.state.achievement.description : null}</BoxLabel>
+          <AchievementTitle>{this.state.achievement ? this.state.achievement.name : null}</AchievementTitle>
+          <AchievementSubtitle>{this.state.achievement ? this.state.achievement.description : null}</AchievementSubtitle>
         </AchievementModal>
       </QuestionList>
     );

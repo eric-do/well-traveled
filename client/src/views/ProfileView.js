@@ -1,40 +1,39 @@
 import React from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const AchievementList = styled.div``;
 
 const AchievementCard = styled.div``;
 
 const AchievementTitle = styled.h1`
+  margin-top: 50px; 
   font-family: 'Pacifico', cursive; 
+  display: flex;
+  justify-content: center;
 `;
 
 const AchievementSubtitle = styled.h2`
   font-family: 'Open Sans', sans-serif;
+  display: flex;
+  justify-content: center;
 `;
 
 class ProfileView extends React.Component {
   constructor(props) {
     super(props);
     this.state = ({
-      achievements: [
-        {
-          title: 'Traveled to San Francisco',
-          subtitle: 'Check-in using your location', 
-          complete: false,
-        },
-        {
-          title: 'Explored Golden Gate',
-          subtitle: 'Answer 1 question about the Golden Gate Bridge',
-          complete: true,
-        },
-        {
-          title: 'SF Aficianado',
-          subtitle: 'Answered 10 questions about San Franisco',
-          complete: true,
-        },
-      ]
+      achievements: []
     });
+  }
+
+  componentDidMount() {
+    axios.get('/achievements', { params: { id: 1 } })
+      .then(results => {
+        const achievements = results.data;
+        console.log(achievements);
+        this.setState({ achievements })
+      });
   }
 
   render() {
@@ -42,9 +41,9 @@ class ProfileView extends React.Component {
       <AchievementList>
         {
           this.state.achievements.map(achievement => (
-            <AchievementCard key={achievement.title}>
-              <AchievementTitle>{achievement.title}</AchievementTitle>
-              <AchievementSubtitle>{achievement.subtitle}</AchievementSubtitle>
+            <AchievementCard key={achievement.name}>
+              <AchievementTitle>{achievement.name}</AchievementTitle>
+              <AchievementSubtitle>{achievement.description}</AchievementSubtitle>
               {
                 achievement.complete ? <i style={{color:"green"}} className="fas fa-check"></i> : null
               }

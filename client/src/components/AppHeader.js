@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { device } from '../device.js';
 import { Link } from 'react-router-dom';
 
 const Navbar = styled.div`

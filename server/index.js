@@ -3,7 +3,7 @@ const path = require('path');
 const parser = require('body-parser');
 const { getLocations, getLandmarks, 
         getQuestions, getAnswers, 
-        updateUserQuestions } = require('./controllers');
+        updateUserQuestions, getUserAchievements } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -33,14 +33,12 @@ app.get('/answers', (req, res) => {
 });
 
 app.post('/questions', (req, res) => {
-  // Takes user id and question id
-  // Insert question into UserQuestions table
-  // Check question count to see if user has hit new achievement
-  // If new achievement has been hit
-  //  Insert achievement in UserAchievements table
-  //  Send achievement object to client
   updateUserQuestions(req, res);
-})
+});
+
+app.get('/achievements', (req, res) => {
+  getUserAchievements(req, res);
+});
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/dist/index.html'));

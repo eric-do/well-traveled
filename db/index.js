@@ -98,4 +98,4 @@ sequelize.sync({ force: false });
 module.exports = { User, Location, 
                    Landmark, Question, 
                    Answer, Achievement,
-                   UserQuestions, UserAchievements };
+                   UserQuestions, UserAchievements, sequelize };
