@@ -3,7 +3,9 @@ const { User,
   Landmark, 
   Question, 
   Answer, 
-  Achievement } = require('../../db');
+  Achievement,
+  UserQuestions,
+  sequelize } = require('../../db');
 
 module.exports = {
   getLocations: (req, res) => {
@@ -21,15 +23,69 @@ module.exports = {
   },
 
   getQuestions: (req, res) => {
-    console.log(req.query);
     Question.findAll({
       include: {
         model: Landmark,
-        where: {id: req.query.id }
+        where: { id: req.query.id }
       }
     }).then(result => {
-      console.log(result);
       res.send(result);
-    });
+    }).catch(e => res.status(500).send('Error getting questions'));
+  },
+
+  getAnswers: (req, res) => {
+    const questionId = req.query.id;
+    Answer.findAll({ where: { questionId } })
+      .then(result => {
+        res.send(result);
+    }).catch(e => res.status(500).send('Error getting answers'));
+  },
+
+  updateUserQuestions: (req, res) => {
+    // Find User from ID
+    // Find Question from ID
+    // Insert new row into user_question table
+    // Find all from user_question table and get the length
+    const userId = req.body.userId;
+    const questionId = req.body.questionId;
+    User.findByPk(userId)
+      .then(user => {
+        Question.findByPk(questionId)
+        .then(question => user.addQuestion(question))
+        .then(() => UserQuestions.findAll({ where: { userId } } ))
+        .then(result => {
+          const count = result.length;
+          module.exports.calculateAchievement(userId, count, res);
+        });
+    })
+  },
+
+  calculateAchievement: (userId, count, res) => {
+    // Get achievement ID from achievements table where count == count
+    // Query UserAchivements for user id and achivement id
+    // If found, return null
+    // If no results
+    //  Insert new user achievement
+    //  Return new achievement
+    Achievement.findOne({ where: { count }})
+      .then(achievement => {
+        if (achievement) {
+          User.findByPk(userId)
+          .then(user => user.addAchievement(achievement))
+          .then(() => res.send(achievement))
+        } else {
+          res.status(200).send();
+        }
+      });
+  },
+
+  getUserAchievements: (req, res) => {
+    const id = req.query.id;
+    const query = `SELECT achievements.name, achievements.description FROM users
+                   INNER JOIN user_achievements ON (users.id = user_achievements.userId)
+                   INNER JOIN achievements on (user_achievements.achievementId = achievements.id)
+                   WHERE users.id = ${id}`
+    sequelize.query(query)
+      .then(([results, metadata]) => res.send(results));
   }
 }

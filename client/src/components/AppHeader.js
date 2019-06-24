@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { device } from '../device.js';
 import { Link } from 'react-router-dom';
 
 const Navbar = styled.div`
@@ -49,9 +48,9 @@ const StyledLink = styled(Link)`
 
 const Header = () => (
   <Navbar>
-    <BrandSection>WellTraveled</BrandSection>
+    <BrandSection>ScavengeSF</BrandSection>
     <LinkSection>
-      <StyledLink to="/travel" className="link">Travel</StyledLink>
+      <StyledLink to="/city" className="link">Travel</StyledLink>
       <StyledLink to="/profile" className="link">Profile</StyledLink>
     </LinkSection>
   </Navbar>

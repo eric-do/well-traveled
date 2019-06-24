@@ -7,6 +7,7 @@ const LandmarkList = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  
 `;
 const Landmark = styled.div`
   max-width: 600px;
@@ -27,6 +28,10 @@ const Layer = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.0);
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -68,7 +73,6 @@ class CityView extends React.Component {
   }
   
   render() {
-    console.log(this.state.landmarks);
     return (
       <LandmarkList>
         <CityName>{this.props.name}</CityName>
@@ -76,10 +80,11 @@ class CityView extends React.Component {
           this.state.landmarks.map(landmark => (
             <StyledLink key={landmark.name} to="/landmark" >
               <Landmark 
-                onClick={() => this.props.handleUpdateLandmark(landmark)}
                 url={landmark.url}
               >
-                <Layer>
+                <Layer
+                  onClick={() => this.props.handleUpdateLandmark(landmark)}
+                >
                 <LandmarkName>{landmark.name}</LandmarkName>
                 {
                   landmark.bookmarked ? <i className="fas fa-bookmark"></i> : null

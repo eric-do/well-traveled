@@ -76,6 +76,10 @@ const Achievement = sequelize.define('achievement', {
   description: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  count: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 }, { timestamps: false }
 );
@@ -90,6 +94,12 @@ Achievement.belongsToMany(User, { through: 'user_achievements' });
 User.belongsToMany(Achievement, { through: 'user_achievements' });
 Question.belongsToMany(User, { through: 'user_questions' });
 User.belongsToMany(Question, { through: 'user_questions' });
+
+const UserQuestions = sequelize.model('user_questions')
+const UserAchievements = sequelize.model('user_achievements');
 sequelize.sync({ force: false });
 
-module.exports = { User, Location, Landmark, Question, Answer, Achievement };
+module.exports = { User, Location, 
+                   Landmark, Question, 
+                   Answer, Achievement,
+                   UserQuestions, UserAchievements, sequelize };
