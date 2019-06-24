@@ -19,6 +19,10 @@ const AchievementSubtitle = styled.h2`
   justify-content: center;
 `;
 
+const Crown = styled(AchievementTitle)`
+  color: gold;
+`;
+
 class ProfileView extends React.Component {
   constructor(props) {
     super(props);
@@ -40,8 +44,14 @@ class ProfileView extends React.Component {
     return (
       <AchievementList>
         {
+          this.state.achievements.length === 0 ? 
+          <div>
+            <AchievementTitle>You have no achievements yet.</AchievementTitle> 
+            <AchievementTitle>Start exploring!</AchievementTitle> 
+          </div>
+          :
           this.state.achievements.map(achievement => (
-            <AchievementCard key={achievement.name}>
+            <AchievementCard key={achievement.id}>
               <AchievementTitle>{achievement.name}</AchievementTitle>
               <AchievementSubtitle>{achievement.description}</AchievementSubtitle>
               {

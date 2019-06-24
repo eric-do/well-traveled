@@ -28,6 +28,10 @@ const Layer = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.0);
+  }
 `;
 
 const StyledLink = styled(Link)`

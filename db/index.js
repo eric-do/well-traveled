@@ -76,6 +76,10 @@ const Achievement = sequelize.define('achievement', {
   description: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  count: {
+    type: Sequelize.INTEGER,
+    allowNull: false
   }
 }, { timestamps: false }
 );
