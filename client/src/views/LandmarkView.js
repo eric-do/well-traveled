@@ -7,7 +7,7 @@ import AchievementModal from 'react-modal';
 const QuestionList = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.h1`
@@ -29,11 +29,17 @@ const AchievementSubtitle = styled.h3`
   justify-content: center;
 `;
 
+const BoxContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Box = styled.div`
   max-width: 450px;
-  min-width: 300px;
+  min-width: 400px;
   height: 100px;
-  margin-top: 5px;
+  margin: 10px 0 10px 0;
   border: 1px black solid;
   display: flex;
   justify-content: center;
@@ -44,6 +50,7 @@ const Box = styled.div`
 const BoxLabel = styled.h1`
   font-family: 'Open Sans', sans-serif; 
   font-size: 20px;
+  color: black;
 `;
 
 const Status = styled.div`
@@ -152,15 +159,9 @@ class LandmarkView extends React.Component {
   }
 
   handleQuestionAttempt(answer, question) {
-    // Update state so answer status is displayed
-    // Make a call to the BE to see if a new achievement has been made
-    // Update achievement status
     const correct = answer.correct;
     console.log(question);
     if (correct) {
-      // Send questionID
-      // If server responds with an achivement
-      // Update achievement state and correct state both to true
       axios.post('/questions', {
         userId: 1,
         questionId: question.id
@@ -182,13 +183,15 @@ class LandmarkView extends React.Component {
     return (
       <QuestionList>
         <Title>{this.props.landmark.name}</Title>
-        {
-          this.state.questions.map(question => (
-              <Box key={question.id} onClick={() => this.handleOpenModal(question)} >
-                <BoxLabel>{question.text}</BoxLabel>
-              </Box>
-          ))
-        }
+        <BoxContainer>
+          {
+            this.state.questions.map(question => (
+                <Box key={question.id} onClick={() => this.handleOpenModal(question)} >
+                  <BoxLabel>{question.text}</BoxLabel>
+                </Box>
+            ))
+          }
+        </BoxContainer>
         <ReactModal
             isOpen={this.state.showModal}
             style={modalStyle}
@@ -196,13 +199,15 @@ class LandmarkView extends React.Component {
             onRequestClose={this.handleCloseModal}
           >
             <Title>{ this.state.currentQuestion.text }</Title>
-            {
-              this.state.questionAnswers.map(answer =>(
-                <Box key={answer.id} onClick={() => this.handleQuestionAttempt(answer, this.state.currentQuestion)}>
-                  <BoxLabel>{answer.text}</BoxLabel>
-                </Box>
-              ))
-            }
+            <BoxContainer>
+              {
+                this.state.questionAnswers.map(answer =>(
+                  <Box key={answer.id} onClick={() => this.handleQuestionAttempt(answer, this.state.currentQuestion)}>
+                    <BoxLabel>{answer.text}</BoxLabel>
+                  </Box>
+                ))
+              }
+            </BoxContainer>
             {
               this.state.correct === true ? <CorrectStatus>Correct!</CorrectStatus> :
               this.state.correct === false ? <IncorrectStatus>Incorrect!</IncorrectStatus> :
