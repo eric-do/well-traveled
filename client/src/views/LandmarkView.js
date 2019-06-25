@@ -45,6 +45,7 @@ const Box = styled.div`
   justify-content: center;
   padding: 0 10px 0 10px;
   align-items: center;
+  background-color: white;
 `;
 
 const BoxLabel = styled.h1`
@@ -77,6 +78,26 @@ const modalStyle = {
   },
   content: {
     backgroundColor: 'white',
+    opacity: '1'
+  }
+};
+
+const modalStyleCorrect = {
+  overlay: {
+    backgroundColor: 'rgba(0,0,0, 0.8)'
+  },
+  content: {
+    backgroundColor: 'MediumSpringGreen',
+    opacity: '1'
+  }
+};
+
+const modalStyleIncorrect = {
+  overlay: {
+    backgroundColor: 'rgba(0,0,0, 0.8)'
+  },
+  content: {
+    backgroundColor: 'Salmon',
     opacity: '1'
   }
 };
@@ -194,7 +215,9 @@ class LandmarkView extends React.Component {
         </BoxContainer>
         <ReactModal
             isOpen={this.state.showModal}
-            style={modalStyle}
+            style={this.state.correct === true ? modalStyleCorrect :
+                   this.state.correct === false ? modalStyleIncorrect :
+                   modalStyle}
             shouldCloseOnEsc={true}
             onRequestClose={this.handleCloseModal}
           >
