@@ -48,6 +48,7 @@ module.exports = {
     // Find all from user_question table and get the length
     const userId = req.body.userId;
     const questionId = req.body.questionId;
+
     User.findByPk(userId)
       .then(user => {
         Question.findByPk(questionId)
@@ -81,7 +82,7 @@ module.exports = {
 
   getUserAchievements: (req, res) => {
     const id = req.query.id;
-    const query = `SELECT achievements.name, achievements.description FROM users
+    const query = `SELECT achievements.id, achievements.name, achievements.description FROM users
                    INNER JOIN user_achievements ON (users.id = user_achievements.userId)
                    INNER JOIN achievements on (user_achievements.achievementId = achievements.id)
                    WHERE users.id = ${id}`
