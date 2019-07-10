@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 const parser = require('body-parser');
-const { getLocations, getLandmarks, getQuestions } = require('./controllers');
+const { getLocations, getLandmarks, 
+        getQuestions, getAnswers, 
+        updateUserQuestions, getUserAchievements } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -24,6 +26,18 @@ app.get('/landmarks', (req, res) => {
 
 app.get('/questions', (req, res) => {
   getQuestions(req, res);
+});
+
+app.get('/answers', (req, res) => {
+  getAnswers(req, res);
+});
+
+app.post('/questions', (req, res) => {
+  updateUserQuestions(req, res);
+});
+
+app.get('/achievements', (req, res) => {
+  getUserAchievements(req, res);
 });
 
 app.get('/*', (req, res) => {
