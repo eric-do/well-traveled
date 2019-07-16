@@ -84,7 +84,7 @@ const Achievement = sequelize.define('achievement', {
 }, { timestamps: false }
 );
 
-const Vote = sequelize.define('vote', {
+const Vote = sequelize.define('user_vote', {
   direction: {
     type: Sequelize.TINYINT,
     allowNull: false
@@ -102,14 +102,12 @@ Achievement.belongsToMany(User, { through: 'user_achievements' });
 User.belongsToMany(Achievement, { through: 'user_achievements' });
 Question.belongsToMany(User, { through: 'user_questions' });
 User.belongsToMany(Question, { through: 'user_questions' });
-Vote.belongsTo(User);
-User.hasMany(Vote);
-Vote.belongsTo(Question);
-Question.hasMany(Vote);
-
+User.belongsToMany(Question, {through: Vote});
+Question.belongsToMany(User, {through: Vote});
 
 const UserQuestions = sequelize.model('user_questions')
 const UserAchievements = sequelize.model('user_achievements');
+
 sequelize.sync({ force: false });
 
 module.exports = { User, Location, 

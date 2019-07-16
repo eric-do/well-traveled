@@ -94,17 +94,20 @@ module.exports = {
   addUserVote: (req, res) => {
     // Check to see if there's an existing vote
     // If there's an existing vote, replace it
-    // If there is not an existing vote add a new row with the user's vote
-    const { userId, questionId, direction } = req.body;
+    // If there's an existing vote and it's the same as new vote, set to 0
+    // Else set vote to new vote
+    const { userId, questionId } = req.body;
+    const direction = parseInt(req.body.direction);
+
     let newDirection = 0;
     Vote.findAll({ where: { userId }})
-      .then(result => (result.length === 0 ? 0 : result[0].direction))
-      .then(currentDirection => (currentDirection !== direction ? direction : 0))
+      .then(result => result.length === 0 ? 0 : result[0].direction)
+      .then(currentDirection => currentDirection === direction ? 0 : direction)
       .then(direction => {
         newDirection = direction;
         return Vote.upsert({userId, questionId, direction});
       })
-      .then(res.send({ direction: newDirection }))
+      .then(() => res.send({ direction: newDirection }))
       .catch(e => console.error('Problem', e));
   }
 }
