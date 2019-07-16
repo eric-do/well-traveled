@@ -5,6 +5,7 @@ const { User,
   Answer, 
   Achievement,
   UserQuestions,
+  Vote,
   sequelize } = require('../../db');
 
 module.exports = {
@@ -88,5 +89,22 @@ module.exports = {
                    WHERE users.id = ${id}`
     sequelize.query(query)
       .then(([results, metadata]) => res.send(results));
+  },
+
+  addUserVote: (req, res) => {
+    // Check to see if there's an existing vote
+    // If there's an existing vote, replace it
+    // If there is not an existing vote add a new row with the user's vote
+    const { userId, questionId, direction } = req.body;
+    let newDirection = 0;
+    Vote.findAll({ where: { userId }})
+      .then(result => (result.length === 0 ? 0 : result[0].direction))
+      .then(currentDirection => (currentDirection !== direction ? direction : 0))
+      .then(direction => {
+        newDirection = direction;
+        return Vote.upsert({userId, questionId, direction});
+      })
+      .then(res.send({ direction: newDirection }))
+      .catch(e => console.error('Problem', e));
   }
 }

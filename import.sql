@@ -131,3 +131,20 @@ UPDATE landmarks SET url = "/images/locations/ben_thanh.jpg"
 WHERE id = 13;
 UPDATE landmarks SET url = "/images/locations/hcmc_square.jpg"
 WHERE id = 14;
+
+-- QUESTION SCORES
+UPDATE questions SET points = 5 WHERE id = 1;
+UPDATE questions SET points = 4 WHERE id = 2;
+UPDATE questions SET points = 3 WHERE id = 3;
+UPDATE questions SET points = 2 WHERE id = 4;
+UPDATE questions SET points = 1 WHERE id = 5;
+UPDATE questions SET points = 5 WHERE id = 6;
+UPDATE questions SET points = 4 WHERE id = 7;
+UPDATE questions SET points = 3 WHERE id = 9;
+UPDATE questions SET points = 2 WHERE id = 10;
+UPDATE questions SET points = 1 WHERE id = 11;
+UPDATE questions SET points = 5 WHERE id = 12;
+UPDATE questions SET points = 4 WHERE id = 13;
+UPDATE questions SET points = 3 WHERE id = 14;
+UPDATE questions SET points = 2 WHERE id = 15;
+UPDATE questions SET points = 1 WHERE id = 17;

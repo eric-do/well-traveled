@@ -49,8 +49,8 @@ const Question = sequelize.define('question', {
     type: Sequelize.STRING,
     allowNull: false
   },
-  points: {
-    type: Sequelize.INTEGER,
+  rating: {
+    type: Sequelize.FLOAT,
     defaultValue: 0
   }
 }, { timestamps: false }
@@ -84,6 +84,14 @@ const Achievement = sequelize.define('achievement', {
 }, { timestamps: false }
 );
 
+const Vote = sequelize.define('vote', {
+  direction: {
+    type: Sequelize.TINYINT,
+    allowNull: false
+  }
+}, { timestamps: false }
+);
+
 Location.hasMany(Landmark);
 Landmark.belongsTo(Location);
 Landmark.hasMany(Question);
@@ -94,6 +102,11 @@ Achievement.belongsToMany(User, { through: 'user_achievements' });
 User.belongsToMany(Achievement, { through: 'user_achievements' });
 Question.belongsToMany(User, { through: 'user_questions' });
 User.belongsToMany(Question, { through: 'user_questions' });
+Vote.belongsTo(User);
+User.hasMany(Vote);
+Vote.belongsTo(Question);
+Question.hasMany(Vote);
+
 
 const UserQuestions = sequelize.model('user_questions')
 const UserAchievements = sequelize.model('user_achievements');
@@ -102,4 +115,4 @@ sequelize.sync({ force: false });
 module.exports = { User, Location, 
                    Landmark, Question, 
                    Answer, Achievement,
-                   UserQuestions, UserAchievements, sequelize };
+                   UserQuestions, UserAchievements, Vote, sequelize };
