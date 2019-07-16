@@ -109,5 +109,12 @@ module.exports = {
       })
       .then(() => res.send({ direction: newDirection }))
       .catch(e => console.error('Problem', e));
+  },
+
+  getUserVote: (req, res) => {
+    const { userId, questionId } = req.query;
+
+    Vote.findAll({ where: { userId, questionId }})
+      .then(result => res.send(result[0]));
   }
 }

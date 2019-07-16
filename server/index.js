@@ -4,7 +4,7 @@ const parser = require('body-parser');
 const { getLocations, getLandmarks, 
         getQuestions, getAnswers, 
         updateUserQuestions, getUserAchievements,
-        addUserVote } = require('./controllers');
+        addUserVote, getUserVote } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -44,6 +44,10 @@ app.get('/achievements', (req, res) => {
 app.post('/vote', (req, res) => {
   addUserVote(req, res);
 })
+
+app.get('/get_vote', (req, res) => {
+  getUserVote(req, res);
+});
 
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/dist/index.html'));
