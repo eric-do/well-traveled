@@ -116,7 +116,7 @@ module.exports = {
     const { userId, questionId } = req.query;
 
     Vote.findAll({ where: { userId, questionId }})
-      .then(result => res.send(result[0]));
+      .then(result => result.length > 0 ? res.send(result[0]) : null);
   },
 
   getUpvotes: (req, res) => {
