@@ -143,6 +143,6 @@ module.exports = {
         direction: { [Op.lt]: 0 }
       }
     })
-      .then(downvotes => res.send({ downvotes }));
+      .then(downvotes => res.send({ downvotes: Math.abs(downvotes) }));
   }
 }
