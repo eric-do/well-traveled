@@ -6,7 +6,8 @@ const { User,
   Achievement,
   UserQuestions,
   Vote,
-  sequelize } = require('../../db');
+  sequelize,
+  Op } = require('../../db');
 
 module.exports = {
   getLocations: (req, res) => {
@@ -116,5 +117,32 @@ module.exports = {
 
     Vote.findAll({ where: { userId, questionId }})
       .then(result => res.send(result[0]));
+  },
+
+  getUpvotes: (req, res) => {
+    const { questionId } = req.query;
+
+    Vote.sum('direction', { 
+      where: { 
+        questionId, 
+        direction: { [Op.gt]: 0 }
+      }
+    })
+      .then(upvotes => {
+        console.log(upvotes);
+        res.send({ upvotes });
+      });
+  },
+
+  getDownvotes: (req, res) => {
+    const { questionId } = req.query;
+
+    Vote.sum('direction', { 
+      where: { 
+        questionId, 
+        direction: { [Op.lt]: 0 }
+      }
+    })
+      .then(downvotes => res.send({ downvotes }));
   }
 }

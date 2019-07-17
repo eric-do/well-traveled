@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const sequelize = new Sequelize('mvp', 'root', 'student', {
   host: 'localhost',
@@ -113,4 +114,4 @@ sequelize.sync({ force: false });
 module.exports = { User, Location, 
                    Landmark, Question, 
                    Answer, Achievement,
-                   UserQuestions, UserAchievements, Vote, sequelize };
+                   UserQuestions, UserAchievements, Vote, sequelize, Op };
