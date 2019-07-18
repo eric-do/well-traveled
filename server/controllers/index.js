@@ -38,10 +38,8 @@ module.exports = {
   getAnswers: (req, res) => {
     const questionId = req.query.id;
     Answer.findAll({ where: { questionId } })
-      .then(result => {
-        console.log(result);
-        res.send(result);
-    }).catch(e => res.status(500).send('Error getting answers'));
+      .then(result => res.send(result))
+      .catch(e => res.status(500).send('Error getting answers'));
   },
 
   updateUserQuestions: (req, res) => {
@@ -130,7 +128,6 @@ module.exports = {
       }
     })
       .then(upvotes => {
-        console.log(upvotes);
         res.send({ upvotes });
       });
   },
