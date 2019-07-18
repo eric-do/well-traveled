@@ -39,6 +39,7 @@ module.exports = {
     const questionId = req.query.id;
     Answer.findAll({ where: { questionId } })
       .then(result => {
+        console.log(result);
         res.send(result);
     }).catch(e => res.status(500).send('Error getting answers'));
   },

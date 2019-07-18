@@ -29,6 +29,10 @@ const Location = sequelize.define('location', {
   name: {
     type: Sequelize.STRING,
     allowNull: false
+  },
+  url: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
 }, { timestamps: false }
 );
