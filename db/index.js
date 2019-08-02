@@ -105,6 +105,14 @@ const Achievement = sequelize.define(
     count: {
       type: Sequelize.INTEGER,
       allowNull: false
+    },
+    locationId: {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    },
+    landmarkId: {
+      type: Sequelize.INTEGER,
+      allowNull: true
     }
   },
   { timestamps: false }
@@ -135,22 +143,37 @@ const UserQuestions = sequelize.define("user_questions",
   { timestamps: false }
 );
 
+const UserAchievements = sequelize.define("user_achievements",
+  {
+    userId: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    achievementId: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    }
+  },
+  { timestamps: false }
+);
+
 Location.hasMany(Landmark);
 Landmark.belongsTo(Location);
 Landmark.hasMany(Question);
 Question.belongsTo(Landmark);
 Question.hasMany(Answer);
 Answer.belongsTo(Question);
-Achievement.belongsToMany(User, { through: "user_achievements" });
-User.belongsToMany(Achievement, { through: "user_achievements" });
+//Achievement.belongsToMany(User, { through: "user_achievements" });
+//User.belongsToMany(Achievement, { through: "user_achievements" });
 //Question.belongsToMany(User, { through: "user_questions" });
 //User.belongsToMany(Question, { through: "user_questions" });
 User.belongsToMany(Question, { through: Vote });
 Question.belongsToMany(User, { through: Vote });
 UserQuestions.hasMany(Question);
+UserAchievements.hasMany(Achievement);
 
 //const UserQuestions = sequelize.model("user_questions");
-const UserAchievements = sequelize.model("user_achievements");
+//const UserAchievements = sequelize.model("user_achievements");
 
 sequelize.sync({ force: false });
 
