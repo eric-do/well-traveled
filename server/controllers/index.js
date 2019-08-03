@@ -12,7 +12,8 @@ const {
 } = require("../../db");
 const { admin, getUserId } = require("../../firebase.js");
 const Services = require("../services");
-const { getAnyNewAchievements } = require("../services/achievements/LocationAwarder");
+const Achievements = require("../services/achievements")
+const LocationAwarder = require("../services/achievements/LocationAwarder");
 
 module.exports = {
   getLocations: (req, res) => {
@@ -57,13 +58,6 @@ module.exports = {
       .catch(e => res.status(500).send("Error getting answers"));
   },
 
-  processQuestionAttempt: async (req, res) => {
-    const userId = await getUserId(req.body.token);
-    const questionId = req.body.questionId;
-    await module.exports.updateUserQuestions(userId, questionId);
-    const userAchievement = await module.exports.calculateAchievement(userId);
-  },
-
   updateUserQuestions: async (req, res) => {
     // Find User from ID
     // Find Question from ID
@@ -74,7 +68,7 @@ module.exports = {
       const userId = await getUserId(req.body.token);
       const questionId = req.body.questionId;
       await Services.updateUserQuestions(userId, questionId);
-      const newAchievements = await getAnyNewAchievements(userId);
+      const newAchievements = await LocationAwarder.getAnyNewAchievements(userId);
       res.send(newAchievements);
     } catch (e) {
       console.error(e);
@@ -97,46 +91,11 @@ module.exports = {
     return userQuestions;
   },
 
-  calculateAchievement: async (userId, count, res) => {
-    // Get achievement ID from achievements table where count == count
-    // Query UserAchivements for user id and achivement id
-    // If found, return null
-    // If no results
-    //  Insert new user achievement
-    //  Return new achievement
-
-    // Q: Select all questions the user has answered: userId, locationid, landmarkId, questionId
-    // Q: Select all the user's achievements
-    // Process the questionArray to find qualifying achievements
-    // Find the non-common  achievements between user's achievements and qualifying achievements
-    // Insert achievements to user_achievements
-    // Return the list of new achievements
-
-    const userQuestions = await module.exports.getUserQuestions(userId);
-    const userAchievements = await Services.getUserAchievements(userId);
-    awardLocationAchievements(userQuestions);
-  },
-
-  getUserAchievements: async token => {
-    try {
-      const userId = await getUserId(token);
-      const query = `SELECT user_achievements.userId, achievements.id AS achievementId, 
-                            achievements.name, achievements.description FROM user_achievements 
-                     INNER JOIN achievements on (user_achievements.achievementId = achievements.id)
-                     WHERE user_achievements.userId = '${userId}';`;
-      const results = await sequelize.query(query, {
-        type: sequelize.QueryTypes.SELECT
-      });
-      return results;
-    } catch (e) {
-      throw new Error("Could not get achievements");
-    }
-  },
-
   getAchievements: async (req, res) => {
     try {
       const userId = await getUserId(req.query.token);
-      const achievements = await Services.getUserAchievements(userId);
+      const achievements = await Achievements.getUserAchievements(userId);
+      console.log(achievements);
       res.send(achievements);
     } catch (e) {
       res.status(500).send(e);
