@@ -5,18 +5,15 @@ const {
   awardAchievements
 } = require("./");
 
+/**
+ * Input: userId
+ * Output: array of newly added achievements
+ * Constraints: none
+ * Edge cases: no qualifying achievements
+ * @param {String} userId 
+ * @return {Array} an array of new achievements for the user
+ */
 const getAnyNewAchievements = async userId => {
-  // Input: userId
-  // Output: array of newly added achievements
-  // Constraints: none
-  // Edge cases: no qualifying achievements
-
-  // Pseudocode
-  // Get the sum of questions answered for each location
-  // Get qualifying achievements for the user
-  // Get new achievements for the user
-  // Award new achievements to the unser in the db
-  // Return new achievments
   const sumsOfLocationQuestions = await getSumOfAnsweredQuestions(userId);
   const qualifyingAchievements = await getQualifyingAchievements(
     sumsOfLocationQuestions
@@ -31,11 +28,15 @@ const getAnyNewAchievements = async userId => {
   return newAchievements;
 };
 
+/**
+ * Input: userId
+ * Output: array of objects containing locations and sum of questions answered for location
+ * Constraints: none
+ * Edge cases: no results
+ * @param {String} userId 
+ * @return {Array} the array of question sums for each location
+ */
 const getSumOfAnsweredQuestions = async userId => {
-  // Input: userId
-  // Output: array of objects containing locations and sum of questions answered for location
-  // Constraints: none
-  // Edge cases: no results
   const query = `SELECT a.locationId, a.code, count(a.locationId) as count FROM (
       SELECT uq.userId, uq.questionId, land.locationId, loc.code, count(land.locationId) as count
       FROM user_questions AS uq 
@@ -61,15 +62,15 @@ const getSumOfAnsweredQuestions = async userId => {
   }
 };
 
+/**
+ * Input: location questions sums array
+ * Output: an array of qualifying achievement codes for the user
+ * Constraints: none
+ * Edge cases: no qualifying achievements
+ * @param {Array} sumsOfLocationQuestions 
+ * @return {Array} an array of qualifying achievements for the user
+ */
 const getQualifyingAchievements = sumsOfLocationQuestions => {
-  // Input: location questions sums array
-  // Output: an array of qualifying achievement codes for the user
-  // Constraints: none
-  // Edge cases: no qualifying achievements
-
-  // Pseudocode
-  // For each location, determine applicable achievements and add code to array
-  // Return array of qualifying achievements
   console.log(sumsOfLocationQuestions);
   const qualifyingAchievements = sumsOfLocationQuestions.reduce(
     (result, curr) => {

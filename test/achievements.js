@@ -1,6 +1,6 @@
 var chai = require("chai");
 var assert = chai.assert;
-var Achievements = require("../server/services/achievements");
+var Achievements = require("../server/models/achievements");
 
 describe("getNewAchievements", () => {
   it("should should return an array of new achievements", async () => {

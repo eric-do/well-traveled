@@ -11,13 +11,14 @@ const {
   Op
 } = require("../../db");
 const { admin, getUserId } = require("../../firebase.js");
-const Services = require("../services");
-const Achievements = require("../services/achievements")
-const LocationAwarder = require("../services/achievements/LocationAwarder");
+const Models = require("../models");
+const Achievements = require("../models/achievements")
+const LocationAwarder = require("../models/achievements/LocationAwarder");
 
 module.exports = {
-  getLocations: (req, res) => {
-    Location.findAll().then(result => res.send(result));
+  getLocations: async (req, res) => {
+    const locations = await Models.getLocations();
+    res.send(locations);
   },
 
   getLandmarks: (req, res) => {
@@ -29,21 +30,15 @@ module.exports = {
     }).then(result => res.send(result));
   },
 
-  getQuestions: (req, res) => {
+  getQuestions: async (req, res) => {
     const landmarkId = req.query.id;
-    const query = `SELECT question.id, question.text, question.rating, question.landmarkId,
-                   landmark.name, landmark.url, landmark.locationId
-                   FROM questions AS question INNER JOIN landmarks AS landmark 
-                   ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
-    sequelize
-      .query(query, { type: sequelize.QueryTypes.SELECT })
-      .then(result => {
-        res.send(result);
-      })
-      .catch(e => {
-        console.log(e);
-        res.status(500).send("Error getting questions");
-      });
+    try {
+      const questions = await Models.getQuestions(landmarkId);
+      res.send(questions);
+    } catch (e) {
+      console.log(e);
+      res.status(500).send("Error getting questions");
+    }
   },
 
   getAnswers: (req, res) => {
@@ -61,7 +56,7 @@ module.exports = {
     try {
       const userId = await getUserId(req.body.token);
       const questionId = req.body.questionId;
-      await Services.updateUserQuestions(userId, questionId);
+      await Models.updateUserQuestions(userId, questionId);
       const newAchievements = await LocationAwarder.getAnyNewAchievements(userId);
       res.send(newAchievements);
     } catch (e) {

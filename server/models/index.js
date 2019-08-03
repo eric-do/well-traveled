@@ -27,4 +27,14 @@ module.exports = {
       console.error(e);
     }
   },
-}
+
+  getLocations: async () => Location.findAll(),
+
+  getQuestions: async landmarkId => {
+    const query = `SELECT question.id, question.text, question.rating, question.landmarkId,
+                   landmark.name, landmark.url, landmark.locationId
+                   FROM questions AS question INNER JOIN landmarks AS landmark 
+                   ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
+    return await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+  }
+};
