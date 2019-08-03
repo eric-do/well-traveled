@@ -3,9 +3,9 @@ const path = require('path');
 const parser = require('body-parser');
 const { getLocations, getLandmarks, 
         getQuestions, getAnswers, 
-        updateUserQuestions, getUserAchievements,
+        updateUserQuestions, getUserAchievements, getAchievements,
         addUserVote, getUserVote,
-        getUpvotes, getDownvotes } = require('./controllers');
+        getUpvotes, getDownvotes, validateUser } = require('./controllers');
 
 const app = express();
 const port = 3000;
@@ -38,8 +38,8 @@ app.post('/questions', (req, res) => {
   updateUserQuestions(req, res);
 });
 
-app.get('/achievements', (req, res) => {
-  getUserAchievements(req, res);
+app.get('/achievements', async (req, res) => {
+  getAchievements(req, res);
 });
 
 app.post('/vote', (req, res) => {
@@ -56,6 +56,10 @@ app.get('/upvotes', (req, res) => {
 
 app.get('/downvotes', (req, res) => {
   getDownvotes(req, res);
+});
+
+app.get('/validate-user', (req, res) => {
+  validateUser(req, res);
 });
 
 app.get('/*', (req, res) => {
