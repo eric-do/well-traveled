@@ -27,19 +27,4 @@ module.exports = {
       console.error(e);
     }
   },
-
-  getUserAchievements: async (userId) => {
-    try {
-      const query = `SELECT user_achievements.userId, achievements.id AS achievementId, 
-                            achievements.name, achievements.description FROM user_achievements 
-                     INNER JOIN achievements on (user_achievements.achievementId = achievements.id)
-                     WHERE user_achievements.userId = '${userId}';`;
-      const results = await sequelize.query(query, {
-        type: sequelize.QueryTypes.SELECT
-      });
-      return results;
-    } catch (e) {
-      throw new Error('Could not get achievements');
-    }
-  },
 }

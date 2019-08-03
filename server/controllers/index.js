@@ -30,11 +30,6 @@ module.exports = {
   },
 
   getQuestions: (req, res) => {
-    // Question.findAll({
-    //   include: {
-    //     model: Landmark,
-    //     where: { id: req.query.id }
-    //   }
     const landmarkId = req.query.id;
     const query = `SELECT question.id, question.text, question.rating, question.landmarkId,
                    landmark.name, landmark.url, landmark.locationId
@@ -63,7 +58,6 @@ module.exports = {
     // Find Question from ID
     // Insert new row into user_question table
     // Find all from user_question table and get the length
-
     try {
       const userId = await getUserId(req.body.token);
       const questionId = req.body.questionId;
