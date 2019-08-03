@@ -21,7 +21,8 @@ module.exports.getAnyNewAchievements = async userId => {
     userAchievements,
     qualifyingAchievements
   );
-  await awardAchievements(userId, newAchievements);
+  console.log(newAchievements);
+  await awardAchievements(userId, newAchievements); 
   return newAchievements;
 };
 
@@ -46,8 +47,6 @@ const getSumOfAnsweredQuestions = async userId => {
 
   try {
     const sumAnsweredQuestions = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
-    console.log('Sum of answered questions');
-    console.log(sumAnsweredQuestions);
     return sumAnsweredQuestions;
   } catch (e) {
     console.error(e);
@@ -64,6 +63,7 @@ const getQualifyingAchievements = sumsOfLocationQuestions => {
   // Pseudocode
   // For each location, determine applicable achievements and add code to array
   // Return array of qualifying achievements
+  console.log(sumsOfLocationQuestions);
   const qualifyingAchievements = sumsOfLocationQuestions.reduce(
     (result, curr) => {
       if (curr.count >= 1) {
@@ -79,8 +79,6 @@ const getQualifyingAchievements = sumsOfLocationQuestions => {
     },
     []
   );
-  console.log('Qualifying achievements');
-  console.log(qualifyingAchievements);
   return qualifyingAchievements;
 };
 
@@ -98,34 +96,44 @@ const getUserAchievements = async userId => {
                  INNER JOIN achievements AS a
                  ON ua.achievementId = a.id
                  WHERE ua.userId = '${userId}'`;
-
   try {
     const userAchievements = await sequelize.query(query, {
       type: sequelize.QueryTypes.SELECT
     });
-    console.log('User achievements');
-    console.log(userAchievements);
     return userAchievements;
   } catch (e) {
     console.error(e);
   }
 }
 
-const getNewAchievements = (userAchievements, qualifyingAchievements) => {
+const getNewAchievements = async (userAchievements, qualifyingAchievements) => {
   // Input: user achievement array, qualifying achievement array
   // Output: array containing only new achievements for the user
+  // Constraints: none
+  // Edge cases: empty arrays
 
   // Pseudocode
   // Return non-overlapping achievements  
-  const newAchievements = qualifyingAchievements.filter(achievement => (
+  const newAchievementCodes = qualifyingAchievements.filter(achievement => (
     userAchievements.every(userAchievement => userAchievement.code !== achievement)
   ));
-  console.log('New achievements');
-  console.log(newAchievements);
+  const newAchievements = await getAchievementsFromCodes(newAchievementCodes);
   return newAchievements;
 };
 
-const awardAchievements = async (userId, achievementCodes) => {
+const getAchievementsFromCodes = async codes => {
+  if (codes.length > 0) {
+    const formattedCodes = codes.map(code => `'${code}'`);
+    const achievementsQuery = `SELECT * FROM achievements 
+                               WHERE code in (${formattedCodes})`;
+    const achievements = await sequelize.query(achievementsQuery, { type: sequelize.QueryTypes.SELECT });
+    return achievements;
+  } else {
+    return []
+  }
+}
+
+const awardAchievements = async (userId, achievements) => {
   // Input: user ID, and an achievement array with new achievements for the user
   // Output: none
   // Constraints: none
@@ -133,15 +141,11 @@ const awardAchievements = async (userId, achievementCodes) => {
 
   // Pseudocode
   // Insert achievement codes into user_achievements table
-  const formattedCodes = achievementCodes.map(code => `'${code}'`);
-  const achievementsQuery = `SELECT * FROM achievements 
-                             WHERE code in (${formattedCodes})`;
-  console.log(achievementsQuery);
-  const achievements = await sequelize.query(achievementsQuery, { type: sequelize.QueryTypes.SELECT });;
-  console.log(achievements);
-  await Promise.all(achievements.map(async achievement => {
-    const query = `INSERT INTO user_achievements (userId, achievementId)
-                   VALUES ('${userId}', '${achievement.id}')`;
-    await sequelize.query(query);
-  }));
+  if (achievements.length > 0) {
+    await Promise.all(achievements.map(async achievement => {
+      const query = `INSERT INTO user_achievements (userId, achievementId)
+                     VALUES ('${userId}', '${achievement.id}')`;
+      await sequelize.query(query);
+    }));
+  }
 };

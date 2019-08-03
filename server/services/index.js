@@ -22,14 +22,7 @@ module.exports = {
     try {
       const insertQuery = `INSERT INTO user_questions (userId, questionId)
                            VALUES ('${userId}', '${questionId}')`;
-      const [rowId, columns] = await sequelize.query(insertQuery);
-      
-      // const userQuestions = await module.exports.getUserQuestions(userId);
-      // await module.exports.calculateAchievement(
-      //   userId,
-      //   userQuestions.length,
-      //   res
-      // );
+      await sequelize.query(insertQuery);
     } catch (e) {
       console.error(e);
     }

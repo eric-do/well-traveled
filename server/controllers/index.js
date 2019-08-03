@@ -69,12 +69,12 @@ module.exports = {
     // Find Question from ID
     // Insert new row into user_question table
     // Find all from user_question table and get the length
-    //const userId = req.body.userId;
+
     try {
       const userId = await getUserId(req.body.token);
       const questionId = req.body.questionId;
-      Services.updateUserQuestions(userId, questionId);
-      const newAchievements = getAnyNewAchievements(userId);
+      await Services.updateUserQuestions(userId, questionId);
+      const newAchievements = await getAnyNewAchievements(userId);
       res.send(newAchievements);
     } catch (e) {
       console.error(e);
@@ -115,16 +115,6 @@ module.exports = {
     const userQuestions = await module.exports.getUserQuestions(userId);
     const userAchievements = await Services.getUserAchievements(userId);
     awardLocationAchievements(userQuestions);
-
-    // Achievement.findOne({ where: { count } }).then(achievement => {
-    //   if (achievement) {
-    //     User.findByPk(userId)
-    //       .then(user => user.addAchievement(achievement))
-    //       .then(() => res.send(achievement));
-    //   } else {
-    //     res.status(200).send();
-    //   }
-    // });
   },
 
   getUserAchievements: async token => {
