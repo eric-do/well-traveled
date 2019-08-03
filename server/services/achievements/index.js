@@ -69,5 +69,6 @@ const awardAchievements = async (userId, achievements) => {
 };
 
 module.exports.getUserAchievements = getUserAchievements;
+module.exports.getAchievementsFromCodes = getAchievementsFromCodes;
 module.exports.getNewAchievements = getNewAchievements;
 module.exports.awardAchievements = awardAchievements;
