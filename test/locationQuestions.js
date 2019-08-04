@@ -11,9 +11,20 @@ describe("getLocations", async () => {
   });
 });
 
+describe("getLandmarks", async () => {
+  it("should return an array", async () => {
+    const locationId = 1;
+    const landmarks = await Models.getLandmarks(locationId);
+
+    assert.isArray(landmarks);
+    assert.isAbove(landmarks.length, 0);
+  });
+});
+
 describe("getQuestions", async () => {
   it("should return an array", async () => {
-    const questions = await Models.getQuestions(1);
+    const landmarkId = 1;
+    const questions = await Models.getQuestions(landmarkId);
 
     assert.isArray(questions);
     assert.isAbove(questions.length, 0);

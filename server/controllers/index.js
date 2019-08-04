@@ -21,13 +21,15 @@ module.exports = {
     res.send(locations);
   },
 
-  getLandmarks: (req, res) => {
-    Landmark.findAll({
-      include: {
-        model: Location,
-        where: { id: req.query.id }
-      }
-    }).then(result => res.send(result));
+  getLandmarks: async (req, res) => {
+    const locationId = req.query.id;
+    try {
+      const landmarks = await Models.getLandmarks(locationId);
+      res.send(landmarks);
+    } catch (e) {
+      console.error(e);
+      res.send([]);
+    }
   },
 
   getQuestions: async (req, res) => {
@@ -36,23 +38,23 @@ module.exports = {
       const questions = await Models.getQuestions(landmarkId);
       res.send(questions);
     } catch (e) {
-      console.log(e);
-      res.status(500).send("Error getting questions");
+      console.error(e);
+      res.send([]);
     }
   },
 
-  getAnswers: (req, res) => {
+  getAnswers: async (req, res) => {
     const questionId = req.query.id;
-    Answer.findAll({ where: { questionId } })
-      .then(result => res.send(result))
-      .catch(e => res.status(500).send("Error getting answers"));
+    try {
+      const answers = await Models.getAnswers(questionId);
+      res.send(answers);
+    } catch (e) {
+      console.error(e);
+      res.send([]);
+    }
   },
 
   updateUserQuestions: async (req, res) => {
-    // Find User from ID
-    // Find Question from ID
-    // Insert new row into user_question table
-    // Find all from user_question table and get the length
     try {
       const userId = await getUserId(req.body.token);
       const questionId = req.body.questionId;
@@ -63,23 +65,7 @@ module.exports = {
       console.error(e);
     }
   },
-
-  getUserQuestions: async userId => {
-    const query = `SELECT uq.userId, l.locationId, loc.name AS location, q.landmarkId, uq.questionId
-                   FROM user_questions AS uq
-                   INNER JOIN questions AS q
-                   ON uq.questionId = q.id
-                   INNER JOIN landmarks AS l
-                   ON q.landmarkId = l.id
-                   INNER JOIN locations AS loc
-                   ON l.locationId = loc.id
-                   WHERE uq.userId = '${userId}'`;
-    const userQuestions = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT
-    });
-    return userQuestions;
-  },
-
+  
   getAchievements: async (req, res) => {
     try {
       const userId = await getUserId(req.query.token);

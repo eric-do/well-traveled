@@ -3,3 +3,4 @@ package-lock.json
 public/dist/bundle.js
 .env
 scavenger-8f9b4-firebase-adminsdk-d10zx-e290abffe3.json
+.nyc_output

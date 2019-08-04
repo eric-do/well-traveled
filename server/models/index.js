@@ -30,11 +30,52 @@ module.exports = {
 
   getLocations: async () => Location.findAll(),
 
+  getLandmarks: async locationId => {
+    try {
+      return await Landmark.findAll({
+        include: {
+          model: Location,
+          where: { id: locationId }
+        }
+      });
+    } catch (e) {
+      throw new error("Could not get landmarks");
+    }
+  },
+
   getQuestions: async landmarkId => {
-    const query = `SELECT question.id, question.text, question.rating, question.landmarkId,
-                   landmark.name, landmark.url, landmark.locationId
+    const query = `SELECT question.id, question.text, 
+                          question.rating, question.landmarkId, 
+                          landmark.name, landmark.url, 
+                          landmark.locationId
                    FROM questions AS question INNER JOIN landmarks AS landmark 
                    ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
     return await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+  },
+
+
+  getUserQuestions: async userId => {
+    const query = `SELECT uq.userId, l.locationId, loc.name AS location, 
+                          q.landmarkId, uq.questionId
+                   FROM user_questions AS uq
+                   INNER JOIN questions AS q
+                   ON uq.questionId = q.id
+                   INNER JOIN landmarks AS l
+                   ON q.landmarkId = l.id
+                   INNER JOIN locations AS loc
+                   ON l.locationId = loc.id
+                   WHERE uq.userId = '${userId}'`;
+    const userQuestions = await sequelize.query(query, {
+      type: sequelize.QueryTypes.SELECT
+    });
+    return userQuestions;
+  },
+
+  getAnswers: async questionId => {
+    try {
+      return await Answer.findAll({ where: { questionId } });
+    } catch (e) {
+      throw new error("Could not get answers");
+    }
   }
 };
