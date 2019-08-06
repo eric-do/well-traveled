@@ -9,9 +9,6 @@ const sequelize = new Sequelize("mvp", "root", "student", {
 
 sequelize
   .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-  })
   .catch(err => {
     console.error("Unable to connect to the database:", err);
   });
