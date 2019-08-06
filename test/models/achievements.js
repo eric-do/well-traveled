@@ -1,8 +1,8 @@
 var chai = require("chai");
 var assert = chai.assert;
-var Achievements = require("../server/models/achievements");
+var Achievements = require("../../server/models/achievements");
 
-describe("getNewAchievements", () => {
+describe("Model: getNewAchievements", () => {
   it("should should return an array of new achievements", async () => {
     const qualifyingAchievements = ["sfvisitor", "sfexplorer", "sfexpert"];
     const userAchievements = [{ code: "sfvisitor" }];
@@ -43,7 +43,7 @@ describe("getNewAchievements", () => {
   });
 });
 
-describe("getAchievementsFromCodes", () => {
+describe("Model: getAchievementsFromCodes", () => {
   it("should return an array of achievements specific to the provided codes", async () => {
     const codes = ["sfvisitor", "sfexpert" ];
     const achievements = await Achievements.getAchievementsFromCodes(codes);

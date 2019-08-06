@@ -50,7 +50,11 @@ module.exports = {
                           landmark.locationId
                    FROM questions AS question INNER JOIN landmarks AS landmark 
                    ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
-    return await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    try {
+      return await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+    } catch (e) {
+      return [];
+    }
   },
 
 
