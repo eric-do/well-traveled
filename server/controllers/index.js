@@ -95,17 +95,10 @@ module.exports = {
     res.send(userVote);
   },
 
-  getUpvotes: (req, res) => {
+  getUpvotes: async (req, res) => {
     const { questionId } = req.query;
-
-    Vote.sum("direction", {
-      where: {
-        questionId,
-        direction: { [Op.gt]: 0 }
-      }
-    }).then(upvotes => {
-      res.send({ upvotes });
-    });
+    const upvotes = await Models.getUpvotes(questionId);
+    res.send(upvotes);
   },
 
   getDownvotes: (req, res) => {

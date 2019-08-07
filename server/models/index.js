@@ -115,10 +115,12 @@ module.exports = {
                    WHERE userId = :userId
                    AND questionID = :questionId`;
 
-    return await sequelize.query(query, {
+    const userVotes = await sequelize.query(query, {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
     });
+
+    return userVotes[0];
   },
 
   getUpvotes: async(questionId) => {
@@ -127,8 +129,9 @@ module.exports = {
                    WHERE direction > 0
                    AND questionId = :questionId`;
 
-    return await sequelize.query(query, {
+    const sum = await sequelize.query(query, {
       replacements: { questionId }
     });
+    return sum[0][0];
   }
 };

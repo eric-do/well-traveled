@@ -87,9 +87,19 @@ describe("Controllers", () => {
       const spy = sinon.spy(res, "send");
 
       await Controllers.getUserVote(req, res);
-      const userVote = spy.args[0][0][0];
+      const userVote = spy.args[0][0];
       assert(spy.calledOnce, true);
       assert.equal(userVote.direction, direction);
+    });
+
+    it("should return upvotes for a given question", async () => {
+      const res = { send: () => {} };
+      const req = { query: { questionId }}
+      const spy = sinon.spy(res, "send");
+
+      await Controllers.getUpvotes(req, res);
+      assert(spy.calledOnce, true);
+      assert.property(spy.args[0][0], "sum");
     });
   });
 });
