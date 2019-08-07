@@ -7,7 +7,7 @@ describe("Models: user_votes", () => {
   const userId = "testUser";
 
   after("Delete test user info", async () => {
-    const query = `DELETE from user_votes 
+    const query = `DELETE FROM user_votes 
                    WHERE userId = "${userId}"`;
     await sequelize.query(query);
   });
@@ -55,5 +55,24 @@ describe("Models: user_votes", () => {
     assert.property(userVote[0], "direction");
     assert.property(userVote[0], "userId");
     assert.property(userVote[0], "questionId");
+  });
+
+  it("should return the correct number of upvotes", async () => {
+    const questionId = 2;
+    const addQuery1 = `INSERT INTO user_votes (userId, questionId, direction) 
+                       VALUES ('eric', 2, 1);`
+    const addQuery2 = `INSERT INTO user_votes (userId, questionId, direction) 
+                       VALUES ('tina', 2, 1);`
+    const deleteQuery = `DELETE FROM user_votes 
+                         WHERE questionId = ${questionId}`
+    await sequelize.query(addQuery1);
+    await sequelize.query(addQuery2);
+    const upvotes = await Models.getUpvotes(questionId);
+    await sequelize.query(deleteQuery);
+    assert.equal(upvotes[0][0].sum, 2);
+  })
+
+  it("should not allow duplicate votes", () => {
+
   });
 });

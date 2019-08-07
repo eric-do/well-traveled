@@ -77,7 +77,7 @@ module.exports = {
     }
   },
 
-  addUserVote: (req, res) => {
+  addUserVote: async (req, res) => {
     // Check to see if there's an existing vote
     // If there's an existing vote, replace it
     // If there's an existing vote and it's the same as new vote, set to 0
@@ -85,26 +85,14 @@ module.exports = {
     const { userId, questionId } = req.body;
     const direction = parseInt(req.body.direction);
 
-    let newDirection = 0;
-    Vote.findAll({ where: { userId } })
-      .then(result => (result.length === 0 ? 0 : result[0].direction))
-      .then(currentDirection =>
-        currentDirection === direction ? 0 : direction
-      )
-      .then(direction => {
-        newDirection = direction;
-        return Vote.upsert({ userId, questionId, direction });
-      })
-      .then(() => res.send({ direction: newDirection }))
-      .catch(e => console.error("Problem", e));
+    const newDirection = await Models.addUserVote(userId, questionId, direction);
+    res.send({ direction: newDirection });
   },
 
-  getUserVote: (req, res) => {
+  getUserVote: async (req, res) => {
     const { userId, questionId } = req.query;
-
-    Vote.findAll({ where: { userId, questionId } }).then(result =>
-      result.length > 0 ? res.send(result[0]) : null
-    );
+    const userVote = await Models.getUserVote(userId, questionId);
+    res.send(userVote);
   },
 
   getUpvotes: (req, res) => {

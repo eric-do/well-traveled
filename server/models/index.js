@@ -19,28 +19,22 @@ module.exports = {
     // Insert new row into user_question table
     // Find all from user_question table and get the length
     //const userId = req.body.userId;
-    try {
-      const insertQuery = `INSERT INTO user_questions (userId, questionId)
-                           VALUES ('${userId}', '${questionId}')`;
-      await sequelize.query(insertQuery);
-    } catch (e) {
-      console.error(e);
-    }
+    const insertQuery = `INSERT INTO user_questions (userId, questionId)
+                         VALUES (:userId, :questionId)`;
+    await sequelize.query(insertQuery, {
+      replacements: { userId, questionId }
+    });
   },
 
   getLocations: async () => Location.findAll(),
 
   getLandmarks: async locationId => {
-    try {
-      return await Landmark.findAll({
-        include: {
-          model: Location,
-          where: { id: locationId }
-        }
-      });
-    } catch (e) {
-      throw new error("Could not get landmarks");
-    }
+    return await Landmark.findAll({
+      include: {
+        model: Location,
+        where: { id: locationId }
+      }
+    });
   },
 
   getQuestions: async landmarkId => {
@@ -49,14 +43,11 @@ module.exports = {
                           landmark.name, landmark.url, 
                           landmark.locationId
                    FROM questions AS question INNER JOIN landmarks AS landmark 
-                   ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
-    try {
-      return await sequelize.query(query, {
-        type: sequelize.QueryTypes.SELECT
-      });
-    } catch (e) {
-      return [];
-    }
+                   ON question.landmarkId = landmark.id AND landmark.id = :landmarkId;`;
+    return await sequelize.query(query, {
+      replacements: { landmarkId },
+      type: sequelize.QueryTypes.SELECT
+    });
   },
 
   getUserQuestions: async userId => {
@@ -79,11 +70,7 @@ module.exports = {
   },
 
   getAnswers: async questionId => {
-    try {
-      return await Answer.findAll({ where: { questionId } });
-    } catch (e) {
-      throw new error("Could not get answers");
-    }
+    return await Answer.findAll({ where: { questionId } });
   },
 
   addUserVote: async (userId, questionId, direction) => {
@@ -131,6 +118,17 @@ module.exports = {
     return await sequelize.query(query, {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
+    });
+  },
+
+  getUpvotes: async(questionId) => {
+    const query = `SELECT SUM(direction) AS sum
+                   FROM user_votes
+                   WHERE direction > 0
+                   AND questionId = :questionId`;
+
+    return await sequelize.query(query, {
+      replacements: { questionId }
     });
   }
 };

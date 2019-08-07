@@ -45,7 +45,7 @@ describe("Models: achievements", () => {
     });
   });
   
-  describe("Model: getAchievementsFromCodes", () => {
+  describe("getAchievementsFromCodes", () => {
     it("should return an array of achievements specific to the provided codes", async () => {
       const codes = ["sfvisitor", "sfexpert" ];
       const achievements = await Achievements.getAchievementsFromCodes(codes);
@@ -55,40 +55,41 @@ describe("Models: achievements", () => {
       assert.equal(achievements[1].name, "San Francisco Expert");
     })
   })
+
+  describe("user_achievements", () => {
+    const userId = "testUser";
+    const achievements = [
+      { id: 1 }, { id: 2 }, { id: 3 }
+    ];
+  
+    beforeEach("Add test user achievement", async () => {
+      await Achievements.awardAchievements(userId, achievements);
+    });
+  
+    afterEach("Remove test user achievements", async () => {
+      const query = `DELETE FROM user_achievements WHERE userId = "${userId}"`;
+      await sequelize.query(query);
+    })
+  
+    it("should return a non-empty array of achievements with valid properties", async () => {
+      const achievements = await Achievements.getUserAchievements(userId);
+  
+      assert.isArray(achievements);
+      assert.equal(achievements.length, 3);
+      assert.property(achievements[0], "userId");
+      assert.property(achievements[0], "achievementId");
+      assert.property(achievements[0], "code");
+      assert.property(achievements[0], "name");
+      assert.property(achievements[0], "description");
+      
+    });
+  
+    it("should return an empty array if passed a non-existent user", async () => {
+      const achievements = await Achievements.getUserAchievements("nulluser");
+      
+      assert.isArray(achievements);
+      assert.equal(achievements.length, 0);
+    });
+  });
 });
 
-describe("user_achievements", () => {
-  const userId = "testUser";
-  const achievements = [
-    { id: 1 }, { id: 2 }, { id: 3 }
-  ];
-
-  beforeEach("Add test user achievement", async () => {
-    await Achievements.awardAchievements(userId, achievements);
-  });
-
-  afterEach("Remove test user achievements", async () => {
-    const query = `DELETE FROM user_achievements WHERE userId = "${userId}"`;
-    await sequelize.query(query);
-  })
-
-  it("should return a non-empty array of achievements with valid properties", async () => {
-    const achievements = await Achievements.getUserAchievements(userId);
-
-    assert.isArray(achievements);
-    assert.equal(achievements.length, 3);
-    assert.property(achievements[0], "userId");
-    assert.property(achievements[0], "achievementId");
-    assert.property(achievements[0], "code");
-    assert.property(achievements[0], "name");
-    assert.property(achievements[0], "description");
-    
-  });
-
-  it("should return an empty array if passed a non-existent user", async () => {
-    const achievements = await Achievements.getUserAchievements("nulluser");
-    
-    assert.isArray(achievements);
-    assert.equal(achievements.length, 0);
-  });
-});
