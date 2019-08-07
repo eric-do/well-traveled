@@ -51,12 +51,13 @@ module.exports = {
                    FROM questions AS question INNER JOIN landmarks AS landmark 
                    ON question.landmarkId = landmark.id AND landmark.id = ${landmarkId};`;
     try {
-      return await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
+      return await sequelize.query(query, {
+        type: sequelize.QueryTypes.SELECT
+      });
     } catch (e) {
       return [];
     }
   },
-
 
   getUserQuestions: async userId => {
     const query = `SELECT uq.userId, l.locationId, loc.name AS location, 
@@ -68,8 +69,10 @@ module.exports = {
                    ON q.landmarkId = l.id
                    INNER JOIN locations AS loc
                    ON l.locationId = loc.id
-                   WHERE uq.userId = '${userId}'`;
+                   WHERE uq.userId = :user`;
+
     const userQuestions = await sequelize.query(query, {
+      replacements: { user: userId },
       type: sequelize.QueryTypes.SELECT
     });
     return userQuestions;
@@ -81,5 +84,53 @@ module.exports = {
     } catch (e) {
       throw new error("Could not get answers");
     }
+  },
+
+  addUserVote: async (userId, questionId, direction) => {
+    // Check to see if there's an existing vote
+    // If there's an existing vote, replace it
+    // If there's an existing vote and it's the same as new vote, set to 0
+    // Else set vote to new vote
+
+    const findQuery = `SELECT * FROM user_votes
+                       WHERE userId = :userId
+                       AND questionId = :questionId`;
+
+    const updateQuery = `UPDATE user_votes 
+                         SET direction = :direction
+                         WHERE userId = :userId
+                         AND questionId = :questionId`;
+
+    const insertQuery = `INSERT INTO user_votes
+                         (userId, questionId, direction)
+                         VALUES (:userId, :questionId, :direction)`;
+
+    const existingData = await sequelize.query(findQuery, {
+      replacements: { userId, questionId },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    if (existingData.length > 0) {
+      await sequelize.query(updateQuery, {
+        replacements: { userId, direction, questionId }
+      });
+      return existingData[0].direction === direction ? 0 : direction;
+    } else {
+      await sequelize.query(insertQuery, {
+        replacements: { userId, questionId, direction }
+      });
+      return direction;
+    }
+  },
+
+  getUserVote: async (userId, questionId) => {
+    const query = `SELECT * FROM user_votes
+                   WHERE userId = :userId
+                   AND questionID = :questionId`;
+
+    return await sequelize.query(query, {
+      replacements: { userId, questionId },
+      type: sequelize.QueryTypes.SELECT
+    });
   }
 };

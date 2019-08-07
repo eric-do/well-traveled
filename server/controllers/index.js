@@ -63,7 +63,7 @@ module.exports = {
       res.send(newAchievements);
     } catch (e) {
       console.error(e);
-    }
+    }``
   },
   
   getAchievements: async (req, res) => {

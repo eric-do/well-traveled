@@ -21,6 +21,7 @@ const getUserAchievements = async userId => {
     return userAchievements;
   } catch (e) {
     console.error(e);
+    return [];
   }
 }
 

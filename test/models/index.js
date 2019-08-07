@@ -1,4 +1,4 @@
 require("./achievements");
 require("./locations");
 require("./questions");
-require("./users");
+require("./votes");
