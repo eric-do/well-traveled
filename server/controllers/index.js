@@ -16,6 +16,14 @@ const Achievements = require("../models/achievements")
 const LocationAwarder = require("../models/achievements/LocationAwarder");
 
 module.exports = {
+
+  validateUser: async (req, res) => {
+    const { token } = req.query;
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    console.log(decodedToken.uid);
+    res.send({ uid: decodedToken.uid });
+  },
+
   getLocations: async (req, res) => {
     const locations = await Models.getLocations();
     res.send(locations);
@@ -78,14 +86,10 @@ module.exports = {
   },
 
   addUserVote: async (req, res) => {
-    // Check to see if there's an existing vote
-    // If there's an existing vote, replace it
-    // If there's an existing vote and it's the same as new vote, set to 0
-    // Else set vote to new vote
     const { userId, questionId } = req.body;
     const direction = parseInt(req.body.direction);
-
     const newDirection = await Models.addUserVote(userId, questionId, direction);
+    
     res.send({ direction: newDirection });
   },
 
@@ -101,21 +105,9 @@ module.exports = {
     res.send(upvotes);
   },
 
-  getDownvotes: (req, res) => {
+  getDownvotes: async (req, res) => {
     const { questionId } = req.query;
-
-    Vote.sum("direction", {
-      where: {
-        questionId,
-        direction: { [Op.lt]: 0 }
-      }
-    }).then(downvotes => res.send({ downvotes: Math.abs(downvotes) }));
+    const downvotes = await Models.getDownvotes(questionId);
+    res.send(downvotes);
   },
-
-  validateUser: async (req, res) => {
-    const { token } = req.query;
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    console.log(decodedToken.uid);
-    res.send({ uid: decodedToken.uid });
-  }
 };

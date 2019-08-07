@@ -96,18 +96,20 @@ module.exports = {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
     });
-
+    
     if (existingData.length > 0) {
+      if (existingData[0].direction === direction) {
+        direction = 0;
+      }
       await sequelize.query(updateQuery, {
         replacements: { userId, direction, questionId }
       });
-      return existingData[0].direction === direction ? 0 : direction;
     } else {
       await sequelize.query(insertQuery, {
         replacements: { userId, questionId, direction }
       });
-      return direction;
     }
+    return direction;
   },
 
   getUserVote: async (userId, questionId) => {
@@ -119,12 +121,11 @@ module.exports = {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
     });
-
-    return userVotes[0];
+    return userVotes[0] ? userVotes[0] : { direction: 0 } ;
   },
 
-  getUpvotes: async(questionId) => {
-    const query = `SELECT SUM(direction) AS sum
+  getUpvotes: async questionId => {
+    const query = `SELECT SUM(direction) AS upvotes
                    FROM user_votes
                    WHERE direction > 0
                    AND questionId = :questionId`;
@@ -133,5 +134,18 @@ module.exports = {
       replacements: { questionId }
     });
     return sum[0][0];
+  },
+
+  getDownvotes: async questionId => {
+    const query = `SELECT SUM(direction) AS downvotes
+                   FROM user_votes
+                   WHERE direction < 0
+                   AND questionId = :questionId`;
+
+    const sum = await sequelize.query(query, {
+      replacements: { questionId }
+    });
+
+    return { downvotes: Math.abs(sum[0][0].downvotes) };
   }
 };

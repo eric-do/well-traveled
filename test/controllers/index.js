@@ -5,6 +5,12 @@ const Controllers = require("../../server/controllers");
 const { sequelize } = require("../../db");
 
 describe("Controllers", () => {
+  describe("Firebase auth", () => {
+    it("should return UID for a valid token", async () => {
+
+    });
+  });
+
   describe("getLocations", () => {
     it("should send locations back to the client", async () => {
       const res = { send: () => {} };
@@ -99,7 +105,17 @@ describe("Controllers", () => {
 
       await Controllers.getUpvotes(req, res);
       assert(spy.calledOnce, true);
-      assert.property(spy.args[0][0], "sum");
+      assert.property(spy.args[0][0], "upvotes");
+    });
+
+    it("should return downvotes for a given question", async () => {
+      const res = { send: () => {} };
+      const req = { query: { questionId }}
+      const spy = sinon.spy(res, "send");
+
+      await Controllers.getDownvotes(req, res);
+      assert(spy.calledOnce, true);
+      assert.property(spy.args[0][0], "downvotes");
     });
   });
 });

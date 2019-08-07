@@ -16,7 +16,15 @@ describe("Models: user_votes", () => {
       { replacements: { user: userId2 }});  
   });
 
-  it("should add vote and return direction if the user/vote doesn't exist", async () => {
+  it("should return 0 for direction if no vote exists", async () => {
+    const questionId = 1;
+    const userVote = await Models.getUserVote(userId1, questionId);
+    assert.equal(userVote.direction, 0);
+    assert.isObject(userVote);
+    assert.property(userVote, "direction");
+  });
+
+  it("should add vote then return the given direction if the user/vote doesn't exist", async () => {
     const questionId = 1;
     const direction = 1;
 
@@ -24,10 +32,9 @@ describe("Models: user_votes", () => {
     const userVote = await Models.getUserVote(userId1, questionId);
 
     assert.equal(updateDirection, 1);
+    assert.equal(userVote.direction, 1);
     assert.isObject(userVote);
     assert.property(userVote, "direction");
-    assert.property(userVote, "userId");
-    assert.property(userVote, "questionId");
   });
 
   it("should update vote and return new direction for an existing vote", async () => {
@@ -41,9 +48,8 @@ describe("Models: user_votes", () => {
 
     assert.equal(updateDirection, -1);
     assert.isObject(userVote);
+    assert.equal(userVote.direction, -1);
     assert.property(userVote, "direction");
-    assert.property(userVote, "userId");
-    assert.property(userVote, "questionId");
   });
 
   it("should update vote and return 0 for an existing vote in the same direction", async () => {
@@ -51,14 +57,13 @@ describe("Models: user_votes", () => {
     const direction = 1;
 
     await Models.addUserVote(userId1, questionId, direction);
-    const updateDirection = await Models.addUserVote(userId1, questionId, direction);
+    const newDirection = await Models.addUserVote(userId1, questionId, direction);
     const userVote = await Models.getUserVote(userId1, questionId);
 
-    assert.equal(updateDirection, 0);
+    assert.equal(newDirection, 0);
     assert.isObject(userVote);
+    assert.equal(userVote.direction, 0);
     assert.property(userVote, "direction");
-    assert.property(userVote, "userId");
-    assert.property(userVote, "questionId");
   });
 
   it("should not allow duplicate votes for each user/question", async () => {
@@ -86,8 +91,22 @@ describe("Models: user_votes", () => {
     await sequelize.query(addQuery2);
     const upvotes = await Models.getUpvotes(questionId);
     
-    assert.property(upvotes, "sum");
-    assert.equal(upvotes.sum, 2);
-  })
+    assert.property(upvotes, "upvotes");
+    assert.equal(upvotes.upvotes, 2);
+  });
+
+  it("should return the correct number of downvotes", async () => {
+    const questionId = 2;
+    const addQuery1 = `INSERT INTO user_votes (userId, questionId, direction) 
+                       VALUES ('${userId1}', 2, -1);`
+    const addQuery2 = `INSERT INTO user_votes (userId, questionId, direction) 
+                       VALUES ('${userId2}', 2, -1);`
+
+    await sequelize.query(addQuery1);
+    await sequelize.query(addQuery2);
+    const downvotes = await Models.getDownvotes(questionId);
+    assert.property(downvotes, "downvotes");
+    assert.equal(downvotes.downvotes, 2);
+  });
 
 });
