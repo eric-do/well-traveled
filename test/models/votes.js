@@ -87,12 +87,14 @@ describe("Models: user_votes", () => {
     const addQuery2 = `INSERT INTO user_votes (userId, questionId, direction) 
                        VALUES ('${userId2}', 2, 1);`
     
+    const originalUpvotes = await Models.getUpvotes(questionId); 
     await sequelize.query(addQuery1);
     await sequelize.query(addQuery2);
-    const upvotes = await Models.getUpvotes(questionId);
-    
-    assert.property(upvotes, "upvotes");
-    assert.equal(upvotes.upvotes, 2);
+    const newUpvotes = await Models.getUpvotes(questionId);
+    console.log(originalUpvotes);
+    console.log(newUpvotes);
+    assert.property(newUpvotes, "upvotes");
+    assert.equal(parseInt(newUpvotes.upvotes), parseInt(originalUpvotes.upvotes) + 2);
   });
 
   it("should return the correct number of downvotes", async () => {

@@ -71,7 +71,6 @@ const getSumOfAnsweredQuestions = async userId => {
  * @return {Array} an array of qualifying achievements for the user
  */
 const getQualifyingAchievements = sumsOfLocationQuestions => {
-  console.log(sumsOfLocationQuestions);
   const qualifyingAchievements = sumsOfLocationQuestions.reduce(
     (result, curr) => {
       if (curr.count >= 1) {

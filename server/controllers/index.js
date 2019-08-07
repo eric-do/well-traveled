@@ -20,7 +20,6 @@ module.exports = {
   validateUser: async (req, res) => {
     const { token } = req.query;
     const decodedToken = await admin.auth().verifyIdToken(token);
-    console.log(decodedToken.uid);
     res.send({ uid: decodedToken.uid });
   },
 
@@ -78,7 +77,6 @@ module.exports = {
     try {
       const userId = await getUserId(req.query.token);
       const achievements = await Achievements.getUserAchievements(userId);
-      console.log(achievements);
       res.send(achievements);
     } catch (e) {
       res.status(500).send(e);
