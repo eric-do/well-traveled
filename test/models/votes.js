@@ -91,8 +91,6 @@ describe("Models: user_votes", () => {
     await sequelize.query(addQuery1);
     await sequelize.query(addQuery2);
     const newUpvotes = await Models.getUpvotes(questionId);
-    console.log(originalUpvotes);
-    console.log(newUpvotes);
     assert.property(newUpvotes, "upvotes");
     assert.equal(parseInt(newUpvotes.upvotes), parseInt(originalUpvotes.upvotes) + 2);
   });

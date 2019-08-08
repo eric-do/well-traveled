@@ -10,22 +10,25 @@ const {
  * Output: array of newly added achievements
  * Constraints: none
  * Edge cases: no qualifying achievements
- * @param {String} userId 
+ * @param {String} userId
  * @return {Array} an array of new achievements for the user
  */
 const getAnyNewAchievements = async userId => {
-  const sumsOfLocationQuestions = await getSumOfAnsweredQuestions(userId);
-  const qualifyingAchievements = await getQualifyingAchievements(
-    sumsOfLocationQuestions
-  );
-  const userAchievements = await getUserAchievements(userId);
-  const newAchievements = await getNewAchievements(
-    userAchievements,
-    qualifyingAchievements
-  );
-  console.log(newAchievements);
-  await awardAchievements(userId, newAchievements);
-  return newAchievements;
+  try {
+    const sumsOfLocationQuestions = await getSumOfAnsweredQuestions(userId);
+    const qualifyingAchievements = await getQualifyingAchievements(
+      sumsOfLocationQuestions
+    );
+    const userAchievements = await getUserAchievements(userId);
+    const newAchievements = await getNewAchievements(
+      userAchievements,
+      qualifyingAchievements
+    );
+    await awardAchievements(userId, newAchievements);
+    return newAchievements;
+  } catch (e) {
+    return [];
+  }
 };
 
 /**
@@ -33,7 +36,7 @@ const getAnyNewAchievements = async userId => {
  * Output: array of objects containing locations and sum of questions answered for location
  * Constraints: none
  * Edge cases: no results
- * @param {String} userId 
+ * @param {String} userId
  * @return {Array} the array of question sums for each location
  */
 const getSumOfAnsweredQuestions = async userId => {
@@ -46,20 +49,16 @@ const getSumOfAnsweredQuestions = async userId => {
       ON q.landmarkId = land.id 
       INNER JOIN locations as loc
       ON land.locationId = loc.id
-      WHERE uq.userId = "${userId}" 
+      WHERE uq.userId = :userId
       GROUP BY land.locationID, uq.questionId
     ) AS a
     GROUP BY a.locationId;`;
 
-  try {
-    const sumAnsweredQuestions = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT
-    });
-    return sumAnsweredQuestions;
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+  const sumAnsweredQuestions = await sequelize.query(query, {
+    replacements: { userId },
+    type: sequelize.QueryTypes.SELECT
+  });
+  return sumAnsweredQuestions;
 };
 
 /**
@@ -67,7 +66,7 @@ const getSumOfAnsweredQuestions = async userId => {
  * Output: an array of qualifying achievement codes for the user
  * Constraints: none
  * Edge cases: no qualifying achievements
- * @param {Array} sumsOfLocationQuestions 
+ * @param {Array} sumsOfLocationQuestions
  * @return {Array} an array of qualifying achievements for the user
  */
 const getQualifyingAchievements = sumsOfLocationQuestions => {
@@ -90,3 +89,4 @@ const getQualifyingAchievements = sumsOfLocationQuestions => {
 };
 
 module.exports.getAnyNewAchievements = getAnyNewAchievements;
+module.exports.getQualifyingAchievements = getQualifyingAchievements;

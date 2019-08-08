@@ -14,15 +14,12 @@ const getUserAchievements = async userId => {
                  INNER JOIN achievements AS a
                  ON ua.achievementId = a.id
                  WHERE ua.userId = '${userId}'`;
-  try {
-    const userAchievements = await sequelize.query(query, {
-      type: sequelize.QueryTypes.SELECT
-    });
-    return userAchievements;
-  } catch (e) {
-    console.error(e);
-    return [];
-  }
+
+  const userAchievements = await sequelize.query(query, {
+    type: sequelize.QueryTypes.SELECT
+    
+  });
+  return userAchievements;
 }
 
 /**
