@@ -10,15 +10,15 @@ const {
   sequelize,
   Op
 } = require("../../db");
-const { admin, getUserId } = require("../../firebase.js");
 
 module.exports = {
+  /**
+   * This function adds a mapping for userId and questionId to the DB
+   * @param { String } userId 
+   * @param { Number } questionId
+   * @return nothing
+   */
   updateUserQuestions: async (userId, questionId) => {
-    // Find User from ID
-    // Find Question from ID
-    // Insert new row into user_question table
-    // Find all from user_question table and get the length
-    //const userId = req.body.userId;
     const insertQuery = `INSERT INTO user_questions (userId, questionId)
                          VALUES (:userId, :questionId)`;
     await sequelize.query(insertQuery, {
@@ -26,30 +26,11 @@ module.exports = {
     });
   },
 
-  getLocations: async () => Location.findAll(),
-
-  getLandmarks: async locationId => {
-    return await Landmark.findAll({
-      include: {
-        model: Location,
-        where: { id: locationId }
-      }
-    });
-  },
-
-  getQuestions: async landmarkId => {
-    const query = `SELECT question.id, question.text, 
-                          question.rating, question.landmarkId, 
-                          landmark.name, landmark.url, 
-                          landmark.locationId
-                   FROM questions AS question INNER JOIN landmarks AS landmark 
-                   ON question.landmarkId = landmark.id AND landmark.id = :landmarkId;`;
-    return await sequelize.query(query, {
-      replacements: { landmarkId },
-      type: sequelize.QueryTypes.SELECT
-    });
-  },
-
+  /**
+   * Get an array of questions for a given user
+   * @param { String } userId
+   * @return { Array } 
+   */
   getUserQuestions: async userId => {
     const query = `SELECT uq.userId, l.locationId, loc.name AS location, 
                           q.landmarkId, uq.questionId
@@ -69,16 +50,103 @@ module.exports = {
     return userQuestions;
   },
 
+  /** 
+   * @return { Array } an array of locations
+   */
+  getLocations: async () => Location.findAll(),
+
+  /**
+   * This function gets an array of landmarks for a given location
+   * @param { Number } locationId
+   * @return { Array } of landmarks
+   */
+  getLandmarks: async locationId => {
+    return await Landmark.findAll({
+      include: {
+        model: Location,
+        where: { id: locationId }
+      }
+    });
+  },
+
+  /**
+   * This function gets a list of questions for a given landmark
+   * @param { Number } landmarkId
+   * @return { Array } of questions
+   */
+  getQuestions: async landmarkId => {
+    const query = `SELECT question.id, question.text, 
+                          question.rating, question.landmarkId, 
+                          landmark.name, landmark.url, 
+                          landmark.locationId
+                   FROM questions AS question INNER JOIN landmarks AS landmark 
+                   ON question.landmarkId = landmark.id AND landmark.id = :landmarkId;`;
+    return await sequelize.query(query, {
+      replacements: { landmarkId },
+      type: sequelize.QueryTypes.SELECT
+    });
+  },
+
+  /**
+   * This function gets all answers for a given question.
+   * @param { Number } questionId
+   * @return { Array } answers
+   */
   getAnswers: async questionId => {
     return await Answer.findAll({ where: { questionId } });
   },
 
-  addUserVote: async (userId, questionId, direction) => {
-    // Check to see if there's an existing vote
-    // If there's an existing vote, replace it
-    // If there's an existing vote and it's the same as new vote, set to 0
-    // Else set vote to new vote
+  /**
+   * This function adds a new question to the DB.
+   * @param { String } text - the question text
+   * @param { Number } landmarkId
+   * @return { Number } questionId
+   */
+  addQuestion: async (text, landmarkId) => {
+    const insertQuestion = `INSERT INTO questions (text, landmarkId) 
+                            VALUES (:text, :landmarkId)`;
 
+    const [questionId, metadata] = await sequelize.query(insertQuestion, {
+      replacements: { text, landmarkId },
+      type: sequelize.QueryTypes.INSERT
+    });
+    
+    return questionId;
+  },
+
+  /**
+   * This function takes an array of answers and the questionId for the question
+   * they belong to, and inserts all answers into the db.
+   * @param { Array } answers - an array of answer objects
+   * @param { Number } questionId
+   * @return nothing
+   */
+  addAnswers: async (answers, questionId) => {
+    const insertAnswers = `INSERT INTO answers (text, correct, questionId) 
+                           VALUES (:text, :correct, :questionId)`;
+    await Promise.all(
+      answers.map(async answer =>
+        sequelize.query(insertAnswers, {
+          replacements: {
+            text: answer.text,
+            correct: answer.correct,
+            questionId
+          }
+        })
+      )
+    );
+  },
+
+  /**
+   * This function updates the user's vote for a given question.
+   * If a previous vote exists and it's in the same direction as the new vote,
+   * the vote is set to 0 (neither upvoted nor downvoted).
+   * @param { String } userId
+   * @param { Number } questionId
+   * @param { Number } direction
+   * @return { Number } direction - the updated direction of the user's vote
+   */
+  addUserVote: async (userId, questionId, direction) => {
     const findQuery = `SELECT * FROM user_votes
                        WHERE userId = :userId
                        AND questionId = :questionId`;
@@ -96,7 +164,7 @@ module.exports = {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
     });
-    
+
     if (existingData.length > 0) {
       if (existingData[0].direction === direction) {
         direction = 0;
@@ -121,9 +189,14 @@ module.exports = {
       replacements: { userId, questionId },
       type: sequelize.QueryTypes.SELECT
     });
-    return userVotes[0] ? userVotes[0] : { direction: 0 } ;
+    return userVotes[0] ? userVotes[0] : { direction: 0 };
   },
 
+  /**
+   * This function sums the total upvotes for a given question
+   * @param { Number } questionId
+   * @return { NUmber } sum of upvotes
+   */
   getUpvotes: async questionId => {
     const query = `SELECT SUM(direction) AS upvotes
                    FROM user_votes
@@ -136,6 +209,11 @@ module.exports = {
     return sum[0][0];
   },
 
+  /**
+   * This function sums the total downvotes for a given question
+   * @param { Number } questionId
+   * @return { NUmber } sum of downvotes
+   */
   getDownvotes: async questionId => {
     const query = `SELECT SUM(direction) AS downvotes
                    FROM user_votes

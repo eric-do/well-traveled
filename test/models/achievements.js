@@ -134,8 +134,13 @@ describe("Models: achievements", () => {
       it("should reward users with appropriate location achievements", () => {
         const achievements = [{ count: 10, code: "test" }];
         const qualifyingAchievements = LocationAwarder.getQualifyingAchievements(achievements);
-
         assert.equal(qualifyingAchievements.length, 3);
+      });
+
+      it("should give no reward to users where sum requirements have not been met", () => {
+        const achievements = [{ count: 0, code: "test" }];
+        const qualifyingAchievements = LocationAwarder.getQualifyingAchievements(achievements);
+        assert.equal(qualifyingAchievements.length, 0);
       });
     });
   });

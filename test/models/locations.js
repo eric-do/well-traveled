@@ -13,7 +13,7 @@ describe("Models: locations", () => {
       assert.property(locations[0], "url");
     });
   });
-  
+
   describe("getLandmarks", async () => {
     it("should return an array with valid objects if passed a valid location", async () => {
       const locationId = 1;
