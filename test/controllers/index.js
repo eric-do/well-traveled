@@ -6,9 +6,7 @@ const { sequelize } = require("../../db");
 
 describe("Controllers", () => {
   describe("Firebase auth", () => {
-    it("should return UID for a valid token", async () => {
-
-    });
+    it("should return UID for a valid token", async () => {});
   });
 
   describe("getLocations", () => {
@@ -43,6 +41,41 @@ describe("Controllers", () => {
       await Controllers.getQuestions(req, res);
 
       assert(spy.calledOnce, true);
+    });
+  });
+
+  describe("addQuestion", () => {
+    it("should send new questionId back to client if passed a valid question", async () => {
+      const res = { send: () => {} };
+      const req = {
+        body: {
+          text: "This is a test question?",
+          answers: [
+            {
+              text: "Answer 1",
+              correct: 0
+            },
+            {
+              text: "Answer 2",
+              correct: 1
+            },
+            {
+              text: "Answer 3",
+              correct: 0
+            },
+            {
+              text: "Answer 4",
+              correct: 0
+            }
+          ],
+          landmarkId: 1
+        }
+      };
+      const spy = sinon.spy(res, "send");
+
+      await Controllers.addQuestion(req, res);
+    
+      assert(spy.calledOnce, true)
     });
   });
 
@@ -82,14 +115,17 @@ describe("Controllers", () => {
 
       await Controllers.addUserVote(req, res);
       assert(spy.calledOnce, true);
-      assert.equal(spy.args[0][0].direction, direction);;
+      assert.equal(spy.args[0][0].direction, direction);
     });
 
     it("should return the user's vote for a given user and question", async () => {
       const res = { send: () => {} };
-      const req = { query: {
-        userId, questionId
-      }}
+      const req = {
+        query: {
+          userId,
+          questionId
+        }
+      };
       const spy = sinon.spy(res, "send");
 
       await Controllers.getUserVote(req, res);
@@ -100,7 +136,7 @@ describe("Controllers", () => {
 
     it("should return upvotes for a given question", async () => {
       const res = { send: () => {} };
-      const req = { query: { questionId }}
+      const req = { query: { questionId } };
       const spy = sinon.spy(res, "send");
 
       await Controllers.getUpvotes(req, res);
@@ -110,7 +146,7 @@ describe("Controllers", () => {
 
     it("should return downvotes for a given question", async () => {
       const res = { send: () => {} };
-      const req = { query: { questionId }}
+      const req = { query: { questionId } };
       const spy = sinon.spy(res, "send");
 
       await Controllers.getDownvotes(req, res);

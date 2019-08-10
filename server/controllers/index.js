@@ -50,6 +50,17 @@ module.exports = {
     }
   },
 
+  addQuestion: async (req, res) => {
+    try {
+      const { text, answers, landmarkId } = req.body;
+      const questionId = await Models.addQuestion(text, landmarkId);
+      await Models.addAnswers(answers, questionId);
+      res.send(questionId);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
   getAnswers: async (req, res) => {
     const questionId = req.query.id;
     try {
