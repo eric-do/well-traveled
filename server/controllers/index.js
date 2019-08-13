@@ -52,10 +52,11 @@ module.exports = {
 
   addQuestion: async (req, res) => {
     try {
-      const { text, answers, landmarkId } = req.body;
+      const question = JSON.parse(req.body.question);
+      const { text, answers, landmarkId } = question;
       const questionId = await Models.addQuestion(text, landmarkId);
       await Models.addAnswers(answers, questionId);
-      res.send(questionId);
+      res.sendStatus(200);
     } catch (e) {
       console.log(e);
     }
