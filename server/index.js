@@ -5,7 +5,7 @@ const { getLocations, getLandmarks,
         getQuestions, getAnswers, 
         updateUserQuestions, getUserAchievements, getAchievements,
         addUserVote, getUserVote,
-        getUpvotes, getDownvotes, validateUser } = require('./controllers');
+        getUpvotes, getDownvotes, validateUser, addQuestion } = require("./controllers");
 
 const app = express();
 const port = 3000;
@@ -57,6 +57,10 @@ app.get('/upvotes', (req, res) => {
 app.get('/downvotes', (req, res) => {
   getDownvotes(req, res);
 });
+
+app.post('/users/:user/questions', (req, res) => {
+  addQuestion(req, res);
+})
 
 app.get('/validate-user', (req, res) => {
   validateUser(req, res);
