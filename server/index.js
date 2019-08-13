@@ -58,7 +58,7 @@ app.get('/downvotes', (req, res) => {
   getDownvotes(req, res);
 });
 
-app.post('/users/:user/questions', (req, res) => {
+app.post('/users/questions', (req, res) => {
   addQuestion(req, res);
 })
 
