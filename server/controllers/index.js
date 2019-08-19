@@ -1,19 +1,7 @@
-const {
-  User,
-  Location,
-  Landmark,
-  Question,
-  Answer,
-  Achievement,
-  UserQuestions,
-  Vote,
-  sequelize,
-  Op
-} = require("../../db");
-const { admin, getUserId } = require("../../firebase.js");
-const Models = require("../models");
-const Achievements = require("../models/achievements")
-const LocationAwarder = require("../models/achievements/LocationAwarder");
+const { admin, getUserId } = require('../../firebase.js');
+const Models = require('../models');
+const Achievements = require('../models/achievements');
+const LocationAwarder = require('../models/achievements/LocationAwarder');
 
 module.exports = {
 
@@ -52,8 +40,7 @@ module.exports = {
 
   addQuestion: async (req, res) => {
     try {
-      const question = JSON.parse(req.body.question);
-      const { text, answers, landmarkId } = question;
+      const { text, answers, landmarkId } = req.body;
       const questionId = await Models.addQuestion(text, landmarkId);
       await Models.addAnswers(answers, questionId);
       res.sendStatus(200);
@@ -76,15 +63,15 @@ module.exports = {
   updateUserQuestions: async (req, res) => {
     try {
       const userId = await getUserId(req.body.token);
-      const questionId = req.body.questionId;
+      const { questionId } = req.body;
       await Models.updateUserQuestions(userId, questionId);
       const newAchievements = await LocationAwarder.getAnyNewAchievements(userId);
       res.send(newAchievements);
     } catch (e) {
       console.error(e);
-    }``
+    }
   },
-  
+
   getAchievements: async (req, res) => {
     try {
       const userId = await getUserId(req.query.token);
