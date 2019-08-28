@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 const sequelize = new Sequelize("mvp", "root", "student", {
-  host: "localhost",
+  host: "database",
   dialect: "mysql",
   logging: false
 });
